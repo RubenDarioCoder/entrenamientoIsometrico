@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Tiempo de Entrenar</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ═══ PANTALLAS DE INTRO ═══════════════════════════════════════════════ -->
+<div id="introOverlay" class="intro-overlay" style="display:none">
+  <!-- Pantalla 1: Bienvenida -->
+  <div class="intro-screen" id="intro1">
+    <div class="intro-logo">
+      <img src="img/logo.png" alt="Logo" class="intro-logo-img" onerror="this.style.display='none'">
+      <div class="intro-logo-text">TIEMPO DE<span>ENTRENAR</span></div>
+    </div>
+    <div class="intro-badge">🔬 Entrenamiento Científico</div>
+    <h1 class="intro-title">Precisión.<br>Tiempo.<br>Ciencia.</h1>
+    <p class="intro-subtitle">La única app de entrenamiento basada en tiempos exactos de fase muscular. Excéntrica · Isométrica · Concéntrica.</p>
+    <div class="intro-science-strip">
+      <div class="intro-sci-item"><span class="sci-num">5%</span><span class="sci-label">ganancia semanal<br>de fuerza (Hettinger)</span></div>
+      <div class="intro-sci-item"><span class="sci-num">43%</span><span class="sci-label">mejora en tasa<br>de desarrollo de fuerza</span></div>
+      <div class="intro-sci-item"><span class="sci-num">−7mmHg</span><span class="sci-label">reducción TA<br>sistólica (Smart 2020)</span></div>
+    </div>
+    <button class="intro-btn" id="intro1Btn">Comenzar →</button>
+  </div>
+
+  <!-- Pantalla 2: Cómo funciona -->
+  <div class="intro-screen" id="intro2">
+    <h2 class="intro-section-title">⚡ Cómo funciona</h2>
+    <p class="intro-section-sub">Cada repetición tiene 3 fases con tiempo exacto</p>
+    <div class="intro-phases">
+      <div class="intro-phase ecc">
+        <div class="intro-phase-icon">⬇️</div>
+        <div class="intro-phase-name">EXCÉNTRICA</div>
+        <div class="intro-phase-desc">Descenso controlado.<br>3-4 segundos. Máxima<br>tensión muscular.</div>
+      </div>
+      <div class="intro-phase iso">
+        <div class="intro-phase-icon">⏸️</div>
+        <div class="intro-phase-name">ISOMÉTRICA</div>
+        <div class="intro-phase-desc">Pausa en el punto<br>de máxima tensión.<br>Activa fibras profundas.</div>
+      </div>
+      <div class="intro-phase con">
+        <div class="intro-phase-icon">⬆️</div>
+        <div class="intro-phase-name">CONCÉNTRICA</div>
+        <div class="intro-phase-desc">Subida explosiva.<br>Reclutamiento máximo<br>de unidades motoras.</div>
+      </div>
+    </div>
+    <div class="intro-flow-box">
+      <div class="intro-flow-label">Flujo de entrenamiento</div>
+      <div class="intro-flow">
+        <span class="flow-item prep">🕐 10s Prepara</span>
+        <span class="flow-sep">→</span>
+        <span class="flow-item cnt">321 Cuenta</span>
+        <span class="flow-sep">→</span>
+        <span class="flow-item act">🏋️ Ejercicio</span>
+        <span class="flow-sep">→</span>
+        <span class="flow-item rst">💤 Descanso</span>
+      </div>
+    </div>
+    <button class="intro-btn" id="intro2Btn">Siguiente →</button>
+  </div>
+
+  <!-- Pantalla 3: Selección y arranque -->
+  <div class="intro-screen" id="intro3">
+    <h2 class="intro-section-title">🎯 Elige tu objetivo</h2>
+    <p class="intro-section-sub">46 ejercicios · 22 rutinas · 7 protocolos de rehabilitación</p>
+    <div class="intro-tabs-preview">
+      <div class="intro-tab-item"><span>📊</span><small>Inicio</small></div>
+      <div class="intro-tab-item"><span>▶️</span><small>Rutinas</small></div>
+      <div class="intro-tab-item"><span>✏️</span><small>Crear</small></div>
+      <div class="intro-tab-item"><span>🏥</span><small>Rehab</small></div>
+      <div class="intro-tab-item"><span>📈</span><small>Progreso</small></div>
+    </div>
+    <div class="intro-tip-box">
+      <div>🔊 <strong>Audio activado:</strong> La app anuncia cada fase, el lado del cuerpo y cuenta regresiva. Mantén el volumen encendido.</div>
+    </div>
+    <div class="intro-tip-box" style="margin-top:8px">
+      <div>⏱️ <strong>Beep por segundo:</strong> Cada segundo suena un beep para marcar el ritmo exacto de cada fase.</div>
+    </div>
+    <button class="intro-btn green" id="intro3Btn">¡Empezar a entrenar! 🚀</button>
+  </div>
+</div>
+
+<!-- ═══ APP CONTAINER ═════════════════════════════════════════════════════ -->
+<div id="appContainer" class="app-container" style="display:none">
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="logo-area">
+      <img src="img/logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <h1>TIEMPO DE <span>ENTRENAR</span></h1>
+    </div>
+    <div class="gender-selector">
+      <button class="gender-btn active" id="genderMaleBtn">👨 Masculino</button>
+      <button class="gender-btn" id="genderFemaleBtn">👩 Femenino</button>
+    </div>
+    <nav class="main-nav">
+      <button class="nav-btn active" data-tab="dashboard">📊 Inicio</button>
+      <button class="nav-btn" data-tab="training">▶️ Rutinas</button>
+      <button class="nav-btn" data-tab="create">✏️ Crear</button>
+      <button class="nav-btn" data-tab="rehab">🏥 Rehab</button>
+      <button class="nav-btn" data-tab="progress">📈 Progreso</button>
+    </nav>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-content">
+
+    <!-- ══ TAB: INICIO ════════════════════════════════════════════════════ -->
+    <section id="dashboard-tab" class="tab-panel active">
+      <div class="welcome-card">
+        <h2 id="welcomeTitle">Bienvenido 👨</h2>
+        <p>Entrena con tiempos exactos por fase · Ciencia aplicada al movimiento</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">🏋️</div>
+          <div>
+            <span class="stat-number" id="totalWorkouts">0</span>
+            <div class="stat-label">Entrenos</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏱️</div>
+          <div>
+            <span class="stat-number" id="totalTime">0m</span>
+            <div class="stat-label">Tiempo</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🎯</div>
+          <div>
+            <span class="stat-number" id="streakDays">0</span>
+            <div class="stat-label">Racha</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔥</div>
+          <div>
+            <span class="stat-number" id="totalCalories">0</span>
+            <div class="stat-label">Calorías</div>
+          </div>
+        </div>
+      </div>
+      <div class="science-strip">
+        <div class="sci-fact">
+          <span class="sci-fact-val">5%</span>
+          <span class="sci-fact-lbl">ganancia semanal<br>(Hettinger 1953)</span>
+        </div>
+        <div class="sci-fact">
+          <span class="sci-fact-val">5-12s</span>
+          <span class="sci-fact-lbl">duración óptima<br>contracción isométrica</span>
+        </div>
+        <div class="sci-fact">
+          <span class="sci-fact-val">65%</span>
+          <span class="sci-fact-lbl">menos roturas<br>(Protocolo Oslo)</span>
+        </div>
+        <div class="sci-fact">
+          <span class="sci-fact-val">15min</span>
+          <span class="sci-fact-lbl">IST vs 45min TST<br>mismos resultados</span>
+        </div>
+      </div>
+      <div class="section-title">🌟 Rutinas Recomendadas</div>
+      <div id="recommendedList" class="routines-grid"></div>
+      <div class="tip-card">
+        <div class="tip-icon">💡</div>
+        <div>
+          <h4>Método científico isométrico</h4>
+          <p id="dailyTip">🔴 BAJA lento · 🟡 MANTÉN fuerte · 🟢 SUBE explosivo</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ TAB: RUTINAS ═══════════════════════════════════════════════════ -->
+    <section id="training-tab" class="tab-panel">
+      <div class="filter-bar">
+        <select id="categoryFilter" class="filter-select">
+          <option value="">Todas las categorías</option>
+          <option value="fuerza">💪 Fuerza</option>
+          <option value="hipertrofia">💥 Hipertrofia</option>
+          <option value="glúteos">🍑 Glúteos</option>
+          <option value="tonificación">✨ Tonificación</option>
+          <option value="calistenia">🤸 Calistenia</option>
+          <option value="funcional">⚙️ Funcional</option>
+          <option value="core">🎯 Core</option>
+          <option value="corrección">🧍 Corrección</option>
+          <option value="principiante">🌱 Principiante</option>
+          <option value="personalizada">⭐ Mis Rutinas</option>
+        </select>
+        <select id="difficultyFilter" class="filter-select">
+          <option value="">Todos los niveles</option>
+          <option value="principiante">🌱 Principiante</option>
+          <option value="intermedio">⚡ Intermedio</option>
+          <option value="avanzado">🔥 Avanzado</option>
+        </select>
+      </div>
+      <div id="routinesList" class="routines-grid"></div>
+    </section>
+
+    <!-- ══ TAB: CREAR ═════════════════════════════════════════════════════ -->
+    <section id="create-tab" class="tab-panel">
+      <div class="create-card">
+        <h2>✏️ Crear Rutina Propia</h2>
+        <div class="form-group">
+          <label>Nombre de la rutina</label>
+          <input type="text" id="newRoutineName" placeholder="Mi rutina personalizada" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label>Descripción (opcional)</label>
+          <input type="text" id="newRoutineDesc" placeholder="Describe el objetivo de esta rutina" class="form-input" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Días / semana</label>
+            <input type="number" id="newRoutineDays" value="3" min="1" max="7" class="form-input small" />
+          </div>
+          <div class="form-group">
+            <label>Dificultad</label>
+            <select id="newRoutineDifficulty" class="form-input small">
+              <option value="principiante">Principiante</option>
+              <option value="intermedio" selected>Intermedio</option>
+              <option value="avanzado">Avanzado</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group custom-times-section">
+          <label>⏱️ Tiempos por defecto para nuevos ejercicios</label>
+          <div class="times-row">
+            <div class="time-group">
+              <span class="time-label ecc">⬇️ Baja</span>
+              <input type="number" id="defaultEccentric" value="3" min="0" max="10" class="time-input" />
+              <span class="time-unit">s</span>
+            </div>
+            <div class="time-group">
+              <span class="time-label iso">⏸️ Mantén</span>
+              <input type="number" id="defaultIsometric" value="1" min="0" max="30" class="time-input" />
+              <span class="time-unit">s</span>
+            </div>
+            <div class="time-group">
+              <span class="time-label con">⬆️ Sube</span>
+              <input type="number" id="defaultConcentric" value="2" min="0" max="10" class="time-input" />
+              <span class="time-unit">s</span>
+            </div>
+            <div class="time-group">
+              <span class="time-label rest">💤 Desc.</span>
+              <input type="number" id="defaultRest" value="60" min="10" max="300" class="time-input" />
+              <span class="time-unit">s</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Buscar y agregar ejercicios</label>
+          <input type="text" id="exerciseSearch" placeholder="Buscar por nombre o músculo..." class="form-input" />
+          <div id="exerciseSearchResults" class="search-results"></div>
+        </div>
+        <div class="form-group">
+          <label>Ejercicios seleccionados <span class="hint-text">(toca ✏️ para editar tiempos individuales)</span></label>
+          <div id="selectedExercises" class="selected-exercises">
+            <div class="empty-hint">Añade ejercicios desde el buscador</div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn primary" id="saveRoutineBtn">💾 Guardar Rutina</button>
+          <button class="btn" id="clearRoutineBtn">🗑️ Limpiar</button>
+        </div>
+        <div class="section-title" style="margin-top:24px">📁 Mis Rutinas Guardadas</div>
+        <div id="customRoutinesList" class="routines-grid"></div>
+      </div>
+    </section>
+
+    <!-- ══ TAB: REHABILITACIÓN ════════════════════════════════════════════ -->
+    <section id="rehab-tab" class="tab-panel">
+      <div class="rehab-intro">
+        <h2>🏥 Rehabilitación</h2>
+        <p>Protocolos científicos de recuperación con tiempos isométricos validados clínicamente</p>
+        <div class="rehab-science-note">📚 Basados en: Rio et al. (2017) · Protocolo Alfredson · Protocolo Oslo · McGill · Cook &amp; Rio</div>
+      </div>
+      <div class="rehab-filters">
+        <button class="rehab-filter-btn active" data-injury="all">Todos</button>
+        <button class="rehab-filter-btn" data-injury="Rodilla">🦵 Rodilla</button>
+        <button class="rehab-filter-btn" data-injury="Hombro">🫱 Hombro</button>
+        <button class="rehab-filter-btn" data-injury="Espalda Baja">💆 Lumbar</button>
+        <button class="rehab-filter-btn" data-injury="Isquiotibiales">🏃 Isquios</button>
+        <button class="rehab-filter-btn" data-injury="Tendón Aquiles">🦶 Aquiles</button>
+        <button class="rehab-filter-btn" data-injury="Cadera">🍑 Cadera</button>
+      </div>
+      <div id="rehabProtocolsList" class="rehab-grid"></div>
+      <div id="rehabDetail" class="rehab-detail" style="display:none">
+        <button class="back-btn" id="rehabBackBtn">← Volver a protocolos</button>
+        <div id="rehabDetailContent"></div>
+        <button class="btn primary large" id="startRehabBtn">▶️ INICIAR PROTOCOLO</button>
+      </div>
+    </section>
+
+    <!-- ══ TAB: PROGRESO ══════════════════════════════════════════════════ -->
+    <section id="progress-tab" class="tab-panel">
+      <div class="progress-card-full">
+        <h2>📈 Tu Progreso</h2>
+        <div class="section-title" style="font-size:0.78rem;margin-bottom:10px">🏅 Logros</div>
+        <div id="achievementsList" class="achievements-grid"></div>
+        <div class="section-title" style="font-size:0.78rem;margin-bottom:10px;margin-top:4px">📅 Metas semanales</div>
+        <div id="weeklyGoalsList" class="weekly-goals-list"></div>
+        <div class="section-title" style="font-size:0.78rem;margin-bottom:10px;margin-top:16px">🕐 Historial</div>
+        <div id="historyList" class="history-list"></div>
+        <button class="btn danger-outline" id="resetStatsBtn" style="width:100%;margin-top:12px">🔄 Reiniciar estadísticas</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+<!-- /appContainer -->
+
+<!-- ═══ MODAL: ENTRENAMIENTO ACTIVO ══════════════════════════════════════ -->
+<div id="trainingModal" class="modal" style="display:none">
+  <div class="modal-content" style="position:relative">
+    <!-- Cabecera -->
+    <div class="modal-header">
+      <h3 id="modalExerciseName" style="cursor:pointer;text-decoration:underline dotted rgba(255,255,255,0.2)">-</h3>
+      <div class="modal-header-right">
+        <span id="sideIndicator" class="side-indicator" style="display:none"></span>
+        <button class="voice-toggle-btn" id="voiceToggleBtn" title="Voz activada">🔊</button>
+        <button class="close-modal" id="closeModalBtn">✖</button>
+      </div>
+    </div>
+
+    <!-- Countdown container -->
+    <div id="countdownContainer" class="countdown-container" style="display:none">
+      <div class="countdown-number" id="countdownNumber">10</div>
+      <div class="countdown-label">PREPÁRATE</div>
+    </div>
+
+    <!-- Contenido principal del entrenamiento -->
+    <div id="mainTrainingContent">
+      <!-- Instrucción de fase -->
+      <div class="instruction-box" id="instructionBox">
+        <div class="instruction-big" id="instructionBig">⬇️ BAJA CONTROLADO</div>
+        <div class="instruction-small" id="instructionSmall">Inspira · Controla el descenso</div>
+      </div>
+
+      <!-- Imágenes de fases (se ocultan si no existen) -->
+      <div id="trainingPhaseDisplay" class="training-phase-display" style="display:none">
+        <img id="tpdImgPos" class="tpd-img-single" src="" alt="Posición">
+      </div>
+
+      <!-- Anillo SVG -->
+      <div class="phase-circle-container">
+        <svg class="phase-ring-svg" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+          <circle class="ring-track" cx="110" cy="110" r="90" />
+          <circle class="ring-fill" id="ringFill" cx="110" cy="110" r="90"
+            stroke-dasharray="565 565" stroke-dashoffset="0" />
+        </svg>
+        <div class="phase-circle-center">
+          <div class="timer-large" id="timerLarge">10</div>
+          <div class="circle-phase-label" id="circlePhaseLabel">BAJA</div>
+        </div>
+      </div>
+
+      <!-- Badges de fase -->
+      <div class="phase-badges">
+        <span class="phase-badge eccentric" id="phaseEccentric">⬇️ Baja</span>
+        <span class="phase-badge isometric" id="phaseIsometric">⏸️ Mantén</span>
+        <span class="phase-badge concentric" id="phaseConcentric">⬆️ Sube</span>
+      </div>
+
+      <!-- Contadores -->
+      <div class="counters">
+        <div class="counter">
+          <span class="counter-label">Serie</span>
+          <span id="counterSet">1</span>/<span id="counterTotalSets">3</span>
+        </div>
+        <div class="counter">
+          <span class="counter-label">Rep</span>
+          <span id="counterRep">1</span>/<span id="counterTotalReps">10</span>
+        </div>
+        <div class="counter">
+          <span class="counter-label">Ejercicio</span>
+          <span id="counterExercise">1</span>/<span id="counterTotalExercises">4</span>
+        </div>
+      </div>
+
+      <div class="next-phase-info" id="nextPhaseText">Siguiente: MANTÉN ⏸️</div>
+    </div>
+    <!-- /mainTrainingContent -->
+
+    <!-- Controles del modal de entrenamiento -->
+    <div id="trainingModalBtns">
+      <div class="modal-buttons">
+        <button class="btn" id="pauseTrainingBtn">⏸️ Pausar</button>
+        <button class="btn primary" id="skipPhaseBtn">⏭️ Fase</button>
+        <button class="btn danger" id="stopTrainingBtn">⏹️ Detener</button>
+      </div>
+      <div class="modal-skip-row">
+        <button class="btn skip-ex-btn" id="skipExerciseBtn">⏭️ Saltar ejercicio</button>
+        <button class="btn skip-set-btn" id="skipSetBtn">🔄 Saltar serie</button>
+      </div>
+    </div>
+
+    <div id="completedSeriesList" class="completed-series"></div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: EDITAR TIEMPOS ═════════════════════════════════════════════ -->
+<div id="editTimesModal" class="modal" style="display:none">
+  <div class="modal-content modal-small">
+    <div class="modal-header">
+      <h3 id="editTimesTitle">Editar tiempos</h3>
+      <button class="close-modal" id="closeEditTimesBtn">✖</button>
+    </div>
+    <div class="edit-times-body">
+      <p class="edit-times-hint">Ajusta los tiempos para este ejercicio</p>
+      <div class="times-row centered">
+        <div class="time-group">
+          <span class="time-label ecc">⬇️ Baja</span>
+          <input type="number" id="editEccentric" value="3" min="0" max="10" class="time-input large" />
+          <span class="time-unit">s</span>
+        </div>
+        <div class="time-group">
+          <span class="time-label iso">⏸️ Mantén</span>
+          <input type="number" id="editIsometric" value="1" min="0" max="60" class="time-input large" />
+          <span class="time-unit">s</span>
+        </div>
+        <div class="time-group">
+          <span class="time-label con">⬆️ Sube</span>
+          <input type="number" id="editConcentric" value="2" min="0" max="10" class="time-input large" />
+          <span class="time-unit">s</span>
+        </div>
+        <div class="time-group">
+          <span class="time-label rest">💤 Desc</span>
+          <input type="number" id="editRest" value="60" min="10" max="300" class="time-input large" />
+          <span class="time-unit">s</span>
+        </div>
+      </div>
+      <div class="btn-row" style="margin-top:16px">
+        <button class="btn primary" id="saveEditTimesBtn">✅ Guardar</button>
+        <button class="btn" id="cancelEditTimesBtn">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: DESCRIPCIÓN DE EJERCICIO ══════════════════════════════════ -->
+<div id="exerciseDescModal" class="modal" style="display:none">
+  <div class="modal-content modal-desc">
+    <div class="modal-header">
+      <h3 id="exerciseDescTitle">Ejercicio</h3>
+      <button class="close-modal" id="closeExerciseDescBtn">✖</button>
+    </div>
+    <div id="exerciseDescBody" class="exercise-desc-body"></div>
+  </div>
+</div>
+
+<script src="exerciseDatabase2.js"></script>
+<script src="script2.js"></script>
+</body>
+</html>
