@@ -1,5 +1,98 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+    // ── Rutinas de Modo Recuperación (15-20 min) ──────────────────────────
+    // Se inyectan en window.getAllAvailableRoutines vía patch en exerciseDatabase2.
+    // Aquí las registramos en un array global que el patch ya consume.
+    (function () {
+        var newRecovery = [
+            // ─── 1. MOVILIDAD & ESTIRAMIENTO (~17 min) ───────────────────
+            {
+                id: "recovery_mobility_flow",
+                name: "🧘 Movilidad & Estiramiento",
+                gender: "unisex",
+                daysPerWeek: 3,
+                difficulty: "principiante",
+                category: "Recovery",
+                description: "Sesión de 17 min basada en movilidad articular y estiramientos isométricos. Page et al. (2010) — Stretching científico: mantener una posición isométrica 20-30s activa el reflejo de inhibición autogénica (órgano de Golgi), produciendo mayor relajación muscular que el estiramiento pasivo. Ideal para el día después del entrenamiento o como complemento diario.",
+                exercises: [
+                    "cat_cow",
+                    "thoracic_rotation",
+                    "hip_flexor_stretch_iso",
+                    "wall_angel",
+                    "prone_shoulder_retraction",
+                    "bird_dog",
+                    "ankle_circles_iso",
+                    "foam_roll_iso"
+                ],
+                seriesPerEx: 2,
+                repsPerEx:   4
+            },
+            // ─── 2. ACTIVACIÓN LIGERA (~19 min) ──────────────────────────
+            {
+                id: "recovery_light_activation",
+                name: "⚡ Activación Ligera",
+                gender: "unisex",
+                daysPerWeek: 3,
+                difficulty: "principiante",
+                category: "Recovery",
+                description: "Sesión de 19 min de activación muscular de baja intensidad. Schoenfeld & Contreras (2014): ejercicios de baja carga al 20-40% del 1RM activan el sistema nervioso y aumentan el flujo sanguíneo sin generar daño muscular adicional. Kellmann et al. (2018): la recuperación activa con ejercicio ligero acelera la eliminación de lactato hasta un 30% más rápido que el reposo total. Perfecta como plus al día de entrenamiento o al día siguiente.",
+                exercises: [
+                    "glute_bridge",
+                    "dead_bug",
+                    "bird_dog",
+                    "hip_abduction",
+                    "band_pull_apart",
+                    "shoulder_external_rotation",
+                    "cat_cow",
+                    "wall_angel"
+                ],
+                seriesPerEx: 2,
+                repsPerEx:   6
+            },
+            // ─── 3. BIENESTAR CUERPO & MENTE (~16 min) ───────────────────
+            {
+                id: "recovery_mindful_body",
+                name: "🌿 Bienestar Cuerpo & Mente",
+                gender: "unisex",
+                daysPerWeek: 7,
+                difficulty: "principiante",
+                category: "Recovery",
+                description: "Sesión de 16 min de movimiento consciente. Lowen et al. (2019) — Biofeedback y movimiento: la atención plena durante el movimiento lento reduce el cortisol un 15% y mejora la variabilidad de la frecuencia cardíaca. La combinación de isométricos de hold largo + movilidad lumbar activa el sistema nervioso parasimpático (descanso-digestión). Ideal cualquier día — mañana, mediodía o noche.",
+                exercises: [
+                    "dead_bug",
+                    "cat_cow",
+                    "hip_flexor_stretch_iso",
+                    "bird_dog",
+                    "prone_shoulder_retraction",
+                    "foam_roll_iso",
+                    "ankle_circles_iso"
+                ],
+                seriesPerEx: 2,
+                repsPerEx:   4
+            }
+        ];
+
+        // Registrar en window para que el patch de exerciseDatabase2 las incluya
+        if (!window._extraRecoveryRoutines) window._extraRecoveryRoutines = [];
+        newRecovery.forEach(function (r) {
+            var alreadyIn = (window._extraRecoveryRoutines || []).some(function (x) { return x.id === r.id; });
+            if (!alreadyIn) window._extraRecoveryRoutines.push(r);
+        });
+
+        // Parchear window.getAllAvailableRoutines para incluir las nuevas rutinas Recovery
+        var _prevAll = window.getAllAvailableRoutines;
+        if (_prevAll && !_prevAll._extraPatched) {
+            window.getAllAvailableRoutines = function (gender) {
+                var base = _prevAll(gender);
+                var extra = (window._extraRecoveryRoutines || []);
+                var ids = base.map(function (r) { return r.id; });
+                extra = extra.filter(function (r) { return ids.indexOf(r.id) === -1; });
+                return base.concat(extra);
+            };
+            window.getAllAvailableRoutines._extraPatched = true;
+        }
+    })();
+
     // ── Estado global ─────────────────────────────────────────────────────
     var audioCtx        = null;
     var audioUnlocked   = false;
@@ -8,6 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var editingExIndex  = null;
     var editingTarget   = null;
     var currentGender   = localStorage.getItem("userGender") || "male";
+    window.currentGender = currentGender; // expuesto para fatigue_ui.js
     var userWeight      = parseInt(localStorage.getItem("userWeight")) || 70;
     var currentRoutine  = null;
     var trainingActive  = false;
@@ -37,6 +131,10 @@ document.addEventListener("DOMContentLoaded", function () {
     var currentDetailRoutine = null;
     var openDetailId         = null;
     var ttsWarmedUp          = false;
+
+    // ── Estado del módulo de fatiga ───────────────────────────────────────
+    var _isFatigued        = false;
+    var _accordionOpenId   = null;
     var tenSecPrepSpoken     = false;
     var restTenSecSpoken     = false;
     var _lastPhaseClass      = "";
@@ -169,9 +267,14 @@ document.addEventListener("DOMContentLoaded", function () {
         if (side === "right") speak("Lado derecho");
         else if (side === "left") speak("Lado izquierdo");
     }
-    function speakBetweenRest(nextExName) {
-        if (nextExName) speak("Descansa. Próximo: " + nextExName);
-        else speak("Descansa");
+    function speakBetweenRest(nextExName, side) {
+        var text = "Descansa";
+        if (nextExName) {
+            text += ". Prepárate para " + nextExName;
+            if (side === "right")     text += " lado derecho";
+            else if (side === "left") text += " lado izquierdo";
+        }
+        speak(text);
     }
     function syncSpeakCountdown(s) {
         if (s === 3)      speakImmediate("Tres");
@@ -180,7 +283,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     function speakTenSecPrep(exName, side) {
         var text = "Diez segundos para " + exName;
-        if (side === "right") text += " lado derecho";
+        if (side === "right")     text += " lado derecho";
         else if (side === "left") text += " lado izquierdo";
         text += ", prepárate";
         speakImmediate(text);
@@ -188,10 +291,9 @@ document.addEventListener("DOMContentLoaded", function () {
     function speakTenSecRest(nextName, side, isSameExercise) {
         if (!nextName) return;
         var text = "Diez segundos para " + nextName;
-        if (isSameExercise) {
-            if (side === "right") text += " lado derecho";
-            else if (side === "left") text += " lado izquierdo";
-        }
+        if (side === "right")     text += " lado derecho";
+        else if (side === "left") text += " lado izquierdo";
+        else if (isSameExercise)  text += ", siguiente serie";
         speakImmediate(text);
     }
 
@@ -626,7 +728,11 @@ document.addEventListener("DOMContentLoaded", function () {
         list.querySelectorAll(".routine-card").forEach(function (card) {
             card.addEventListener("click", function () {
                 var r = getAllRoutines().find(function (x) { return x.id === card.dataset.id; });
-                if (r) { var btn = document.querySelector('[data-tab="training"]'); if (btn) btn.click(); setTimeout(function () { toggleInlineDetail(r.id); }, 120); }
+                if (r) {
+                    var btn = document.querySelector('[data-tab="training"]');
+                    if (btn) btn.click();
+                    setTimeout(function () { accordionToggle(r.id); }, 120);
+                }
             });
         });
     }
@@ -636,55 +742,143 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!list) return;
         var catF = (document.getElementById("categoryFilter") || {}).value || "";
         var difF = (document.getElementById("difficultyFilter") || {}).value || "";
-        var routines = getAllRoutines();
-        if (catF) routines = routines.filter(function (r) { return r.category   === catF; });
+
+        // Obtener rutinas según modo fatiga
+        var routines;
+        if (_isFatigued) {
+            // Modo recuperación: mostrar SOLO rutinas Recovery
+            var all = window.getAllAvailableRoutines ? window.getAllAvailableRoutines(currentGender) : [];
+            routines = all.filter(function (r) { return r.category === "Recovery"; });
+            if (!routines.length) {
+                // Fallback: rutinas de dificultad principiante
+                routines = all.filter(function (r) { return r.difficulty === "principiante"; });
+            }
+            // Ordenar: primero las rutinas más cortas (~15-20 min) con id conocido
+            var shortIds = ["recovery_mobility_flow", "recovery_mindful_body", "recovery_light_activation"];
+            routines.sort(function (a, b) {
+                var ai = shortIds.indexOf(a.id);
+                var bi = shortIds.indexOf(b.id);
+                if (ai !== -1 && bi === -1) return -1;
+                if (bi !== -1 && ai === -1) return  1;
+                if (ai !== -1 && bi !== -1) return ai - bi;
+                return 0;
+            });
+        } else {
+            routines = getAllRoutines();
+            // Excluir Recovery cuando no está en modo fatiga
+            routines = routines.filter(function (r) { return r.category !== "Recovery"; });
+        }
+
+        if (catF) routines = routines.filter(function (r) { return r.category === catF; });
         if (difF) routines = routines.filter(function (r) { return r.difficulty === difF; });
         if (!routines.length) { list.innerHTML = '<div class="empty-message">Sin resultados</div>'; return; }
+
         list.innerHTML = routines.map(function (r) {
-            var isCustom = window.customRoutines && window.customRoutines.some(function (x) { return x.id === r.id; });
-            return '<div class="routine-card-wrapper" data-id="' + r.id + '">'
-                + '<div class="routine-card ' + (isCustom ? "custom" : "") + '" data-id="' + r.id + '">'
-                + '<h4>' + r.name + '</h4><p>' + (r.description || "") + '</p>'
+            var isCustom   = window.customRoutines && window.customRoutines.some(function (x) { return x.id === r.id; });
+            var isRecovery = r.category === "Recovery";
+            var catBadge   = isRecovery
+                ? '<span class="category-badge recovery-badge">🔄 Recovery</span>'
+                : (r.category ? '<span class="category-badge">' + r.category + '</span>' : "");
+            return '<div class="routine-card-wrapper accordion-wrapper" data-id="' + r.id + '">'
+                + '<div class="routine-card ' + (isCustom ? "custom" : "") + (isRecovery ? " recovery-card" : "") + '" data-id="' + r.id + '">'
+                + '<h4>' + r.name + '</h4>'
+                + '<p>' + (r.description || "").substring(0, 80) + '…</p>'
+                + '<div class="routine-meta-row">'
                 + '<small>📅 ' + (r.daysPerWeek || 3) + 'd · ' + r.exercises.length + ' ej · ' + r.difficulty + '</small>'
-                + (isCustom ? '<button class="delete-btn" data-id="' + r.id + '">🗑</button>' : "")
-                + '<button class="btn-load-routine" data-id="' + r.id + '">📋 Cargar Rutina</button>'
+                + catBadge
                 + '</div>'
-                + '<div class="routine-inline-detail" id="inline-detail-' + r.id + '" style="display:none"></div>'
+                + (isCustom ? '<button class="delete-btn" data-id="' + r.id + '">🗑</button>' : "")
+                + '<button class="btn-load-routine accordion-trigger" data-id="' + r.id + '">📋 Cargar Rutina</button>'
+                + '</div>'
+                + '<div class="routine-inline-detail accordion-panel" id="inline-detail-' + r.id + '">'
+                + '<div class="accordion-panel-inner"></div>'
+                + '</div>'
                 + '</div>';
         }).join("");
+
         list.querySelectorAll(".btn-load-routine").forEach(function (btn) {
-            btn.addEventListener("click", function (e) { e.stopPropagation(); toggleInlineDetail(btn.dataset.id); });
+            btn.addEventListener("click", function (e) {
+                e.stopPropagation();
+                accordionToggle(btn.dataset.id);
+            });
         });
         list.querySelectorAll(".delete-btn").forEach(function (btn) {
             btn.addEventListener("click", function (e) {
                 e.stopPropagation();
                 if (confirm("¿Eliminar esta rutina permanentemente?")) {
                     window.deleteCustomRoutine(btn.dataset.id);
-                    if (openDetailId === btn.dataset.id) openDetailId = null;
+                    if (_accordionOpenId === btn.dataset.id) _accordionOpenId = null;
+                    if (openDetailId    === btn.dataset.id) openDetailId = null;
                     renderRoutinesList(); renderCustomRoutinesList();
                 }
             });
         });
     }
 
-    function toggleInlineDetail(id) {
-        var routines = getAllRoutines();
-        var r = routines.find(function (x) { return x.id === id; });
-        if (!r) return;
-        if (openDetailId === id) {
-            var el = document.getElementById("inline-detail-" + id);
-            if (el) el.style.display = "none";
-            openDetailId = null; currentDetailRoutine = null; return;
+    // ── Acordeón animado (max-height) ─────────────────────────────────────
+    function accordionToggle(id) {
+        var panel = document.getElementById("inline-detail-" + id);
+        if (!panel) return;
+
+        if (_accordionOpenId === id) {
+            accordionClose(id);
+            return;
         }
-        if (openDetailId) { var prev = document.getElementById("inline-detail-" + openDetailId); if (prev) prev.style.display = "none"; }
-        openDetailId = id; currentDetailRoutine = r; rehabModeActive = false;
-        var detailEl = document.getElementById("inline-detail-" + id);
-        if (!detailEl) return;
-        detailEl.innerHTML = buildInlineDetailHTML(r);
-        detailEl.style.display = "block";
-        setTimeout(function () { detailEl.scrollIntoView({ behavior:"smooth", block:"nearest" }); }, 80);
-        bindInlineDetailEvents(detailEl, r);
+        if (_accordionOpenId) accordionClose(_accordionOpenId);
+
+        _accordionOpenId = id;
+        openDetailId     = id;
+
+        // Construir contenido si aún no se ha hecho
+        var inner = panel.querySelector(".accordion-panel-inner");
+        if (inner && !inner.dataset.built) {
+            // Buscar en todas las rutinas disponibles (incluyendo Recovery)
+            var allAvail = window.getAllAvailableRoutines ? window.getAllAvailableRoutines(currentGender) : getAllRoutines();
+            var r = allAvail.find(function (x) { return x.id === id; });
+            if (!r) r = getAllRoutines().find(function (x) { return x.id === id; });
+            if (r) {
+                currentDetailRoutine = r;
+                rehabModeActive = false;
+                inner.innerHTML = buildInlineDetailHTML(r);
+                inner.dataset.built = "1";
+                bindInlineDetailEvents(inner, r);
+            }
+        }
+
+        panel.classList.add("accordion-open");
+        panel.style.maxHeight = "0px";
+        panel.style.overflow  = "hidden";
+        requestAnimationFrame(function () {
+            panel.style.maxHeight = panel.scrollHeight + "px";
+            panel.addEventListener("transitionend", function onEnd() {
+                panel.style.maxHeight = "none";
+                panel.removeEventListener("transitionend", onEnd);
+                panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            });
+        });
     }
+
+    function accordionClose(id) {
+        var panel = document.getElementById("inline-detail-" + id);
+        if (!panel) return;
+        var h = panel.scrollHeight;
+        panel.style.maxHeight = h + "px";
+        panel.style.overflow  = "hidden";
+        requestAnimationFrame(function () {
+            panel.style.maxHeight = "0px";
+            panel.addEventListener("transitionend", function onEnd() {
+                panel.classList.remove("accordion-open");
+                panel.removeEventListener("transitionend", onEnd);
+            });
+        });
+        if (_accordionOpenId === id) _accordionOpenId = null;
+        if (openDetailId    === id) { openDetailId = null; currentDetailRoutine = null; }
+    }
+
+    // Mantener toggleInlineDetail como alias para compatibilidad con otras partes del código
+    function toggleInlineDetail(id) { accordionToggle(id); }
+
+
 
     function buildInlineDetailHTML(r) {
         var seriesVal = r.seriesPerEx || 3;
@@ -836,7 +1030,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var estMin = calculateRoutineDurationFromR(r, seriesVal, repsVal);
         var startScreen = document.createElement("div");
         startScreen.id = "startScreen";
-        startScreen.style.cssText = "position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;gap:20px;background:linear-gradient(145deg,#1e293b,#0f172a);";
+        startScreen.style.cssText = "position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;gap:20px;background-image:url('img/fondo2.png');background-size:cover;background-position:center;";
         startScreen.innerHTML = '<div style="font-size:4rem;">🏋️</div>'
             + '<div style="font-size:1.25rem;font-weight:900;color:#f1f5f9;letter-spacing:0.05em;text-align:center;">LISTO PARA ENTRENAR</div>'
             + '<div style="font-size:0.88rem;color:#94a3b8;text-align:center;line-height:1.8;max-width:280px;">'
@@ -1127,8 +1321,17 @@ document.addEventListener("DOMContentLoaded", function () {
         lastBeepSecond = seconds + 1;
         clearRestSpeech();
         playRestAlert();
-        if (isSameEx) speak("Descansa. Serie " + currentSet + " de " + (currentRoutine.exercises[currentExerciseIndex].series || 3) + ".");
-        else speak("Descansa. Próximo: " + (exName || ""));
+        // Anuncio inicial de descanso
+        if (isSameEx) {
+            // Cambio de lado (unilateral) o descanso entre series
+            if (side === "right" || side === "left") {
+                speak("Descansa. Prepárate para lado " + (side === "right" ? "derecho" : "izquierdo"));
+            } else {
+                speak("Descansa. Serie " + currentSet + " de " + (currentRoutine.exercises[currentExerciseIndex].series || 3) + ".");
+            }
+        } else {
+            speak("Descansa. Próximo: " + (exName || ""));
+        }
         // Programar: 30s, 10s y 3-2-1 dentro del descanso
         scheduleRestSpeech(seconds, exName, isSameEx, side);
         stopWorkerInterval();
@@ -1169,8 +1372,12 @@ document.addEventListener("DOMContentLoaded", function () {
         if (cc)  cc.style.display  = "none";
         if (ib2) ib2.style.display = "flex";
         playRestAlert();
-        speakBetweenRest(nextExName);
-        scheduleRestSpeech(seconds, nextExName, false, null);
+        // Determinar el lado del próximo ejercicio
+        var nextEx   = currentRoutine && currentRoutine.exercises[currentExerciseIndex];
+        var nextLib  = nextEx ? getExById(nextEx.id) : null;
+        var nextSide = (nextLib && nextLib.unilateral) ? "right" : null;
+        speakBetweenRest(nextExName, nextSide);
+        scheduleRestSpeech(seconds, nextExName, false, nextSide);
         stopWorkerInterval();
         startWorkerInterval();
         updateBetweenExRestUI();
@@ -1553,13 +1760,129 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(function () { startInitialCountdown(); }, 150);
     }
 
+    // ── Modo Recuperación (fatiga) ────────────────────────────────────────
+    function injectFatigueSwitch() {
+        var target = document.getElementById("training-tab");
+        if (!target || document.getElementById("fatigueBlock")) return;
+        var block = document.createElement("div");
+        block.id        = "fatigueBlock";
+        block.className = "fatigue-block";
+        block.innerHTML =
+            '<div class="fatigue-row">'
+            + '<div class="fatigue-label-group">'
+            +   '<span class="fatigue-icon">😴</span>'
+            +   '<div>'
+            +     '<span class="fatigue-title">Modo Recuperación</span>'
+            +     '<span class="fatigue-subtitle">Muestra solo rutinas de baja intensidad</span>'
+            +   '</div>'
+            + '</div>'
+            + '<label class="fatigue-switch">'
+            +   '<input type="checkbox" id="fatigueToggle">'
+            +   '<span class="fatigue-slider"></span>'
+            + '</label>'
+            + '</div>'
+            + '<div id="fatigueBadge" class="fatigue-badge" style="display:none">'
+            +   '🔄 Modo Recuperación Activa — Kellmann et al. (2018)'
+            + '</div>';
+        target.insertBefore(block, target.firstChild);
+        var toggle = document.getElementById("fatigueToggle");
+        if (toggle) {
+            toggle.addEventListener("change", function () {
+                _isFatigued = toggle.checked;
+                document.getElementById("fatigueBadge").style.display = _isFatigued ? "block" : "none";
+                block.classList.toggle("fatigue-active", _isFatigued);
+                // Cerrar acordeón abierto antes de re-renderizar
+                _accordionOpenId = null; openDetailId = null; currentDetailRoutine = null;
+                renderRoutinesList();
+                checkAndSuggestRecovery();
+            });
+        }
+    }
+
+    function checkAndSuggestRecovery() {
+        // Analizar historial local para detectar 3 sesiones intensas seguidas
+        if (document.getElementById("recoverySuggestion")) return;
+        var history = stats && stats.history ? stats.history : [];
+        if (history.length < 3) return;
+        var last3     = history.slice(0, 3);
+        var allR      = window.getAllAvailableRoutines ? window.getAllAvailableRoutines("both") : [];
+        var intensive = ["Fuerza", "Hipertrofia", "fuerza", "hipertrofia"];
+        var count = last3.filter(function (h) {
+            var r = allR.find(function (x) { return x.id === (h.routineId || "") || x.name === (h.routineName || ""); });
+            return r && intensive.indexOf(r.category) !== -1;
+        }).length;
+        if (count < 3) return;
+        var banner = document.createElement("div");
+        banner.id        = "recoverySuggestion";
+        banner.className = "recovery-suggestion-banner";
+        banner.innerHTML =
+            '<div class="recovery-suggestion-content">'
+            + '<span class="recovery-suggestion-icon">💡</span>'
+            + '<div>'
+            +   '<strong>¿Llevas 3 sesiones intensas seguidas?</strong>'
+            +   '<p>Kellmann et al. (2018): la recuperación activa acelera la recuperación muscular hasta un 30%.</p>'
+            + '</div>'
+            + '<button class="recovery-suggestion-btn" id="activateRecoveryBtn">Activar Recuperación</button>'
+            + '<button class="recovery-suggestion-close" id="closeRecoverySuggestion">✕</button>'
+            + '</div>';
+        var trainingTab = document.getElementById("training-tab");
+        if (trainingTab) trainingTab.insertBefore(banner, trainingTab.firstChild);
+        document.getElementById("activateRecoveryBtn").addEventListener("click", function () {
+            _isFatigued = true;
+            var t = document.getElementById("fatigueToggle");
+            if (t) t.checked = true;
+            var fb = document.getElementById("fatigueBadge");
+            if (fb) fb.style.display = "block";
+            var fbl = document.getElementById("fatigueBlock");
+            if (fbl) fbl.classList.add("fatigue-active");
+            _accordionOpenId = null; openDetailId = null; currentDetailRoutine = null;
+            renderRoutinesList();
+            banner.remove();
+        });
+        document.getElementById("closeRecoverySuggestion").addEventListener("click", function () { banner.remove(); });
+    }
+
+    function showSplashScreen(onDone) {
+        var splash = document.createElement("div");
+        splash.id = "splashScreen";
+        splash.innerHTML =
+            '<div class="splash-bg"></div>'
+            + '<div class="splash-content">'
+            +   '<div class="splash-logo-wrap">'
+            +     '<img src="img/logo.png" class="splash-logo" alt="Logo" onerror="this.style.display=\'none\'">'
+            +     '<div class="splash-ring"></div>'
+            +   '</div>'
+            +   '<div class="splash-title">TIEMPO DE<span>ENTRENAR</span></div>'
+            +   '<div class="splash-tagline">Fuerza · Ciencia · Precisión</div>'
+            +   '<div class="splash-bar-wrap"><div class="splash-bar"></div></div>'
+            + '</div>';
+        document.body.appendChild(splash);
+        // Animar la barra de carga
+        requestAnimationFrame(function () {
+            var bar = splash.querySelector(".splash-bar");
+            if (bar) bar.style.width = "100%";
+        });
+        setTimeout(function () {
+            splash.classList.add("splash-fade-out");
+            setTimeout(function () {
+                if (splash.parentElement) splash.parentElement.removeChild(splash);
+                onDone();
+            }, 500);
+        }, 2200);
+    }
+
     function initIntroScreens() {
         var overlay      = document.getElementById("introOverlay");
         var appContainer = document.getElementById("appContainer");
         if (!overlay) return;
-        overlay.style.display = "flex";
+        overlay.style.display = "none";
         if (appContainer) appContainer.style.display = "none";
-        showIntroScreen(1);
+
+        showSplashScreen(function () {
+            overlay.style.display = "flex";
+            showIntroScreen(1);
+        });
+
         var btn1 = document.getElementById("intro1Btn");
         var btn2 = document.getElementById("intro2Btn");
         var btn3 = document.getElementById("intro3Btn");
@@ -1606,14 +1929,14 @@ document.addEventListener("DOMContentLoaded", function () {
     if (genderMale) {
         genderMale.addEventListener("click", function () {
             if (trainingActive) return;
-            currentGender = "male"; localStorage.setItem("userGender", "male");
+            currentGender = "male"; window.currentGender = "male"; localStorage.setItem("userGender", "male");
             updateGenderUI(); renderRecommendedRoutines(); renderRoutinesList();
         });
     }
     if (genderFemale) {
         genderFemale.addEventListener("click", function () {
             if (trainingActive) return;
-            currentGender = "female"; localStorage.setItem("userGender", "female");
+            currentGender = "female"; window.currentGender = "female"; localStorage.setItem("userGender", "female");
             updateGenderUI(); renderRecommendedRoutines(); renderRoutinesList();
         });
     }
@@ -1627,7 +1950,12 @@ document.addEventListener("DOMContentLoaded", function () {
             panels.forEach(function (p) { p.classList.remove("active"); });
             var target = document.getElementById(tab + "-tab");
             if (target) target.classList.add("active");
-            if (tab === "training") { openDetailId = null; currentDetailRoutine = null; renderRoutinesList(); }
+            if (tab === "training") {
+                _accordionOpenId = null; openDetailId = null; currentDetailRoutine = null;
+                injectFatigueSwitch();
+                renderRoutinesList();
+                checkAndSuggestRecovery();
+            }
             if (tab === "create")   { renderCustomRoutinesList(); initExerciseSearch(); }
             if (tab === "rehab")    renderRehabProtocols("all");
             if (tab === "progress") updateProgressUI();
@@ -1735,5 +2063,106 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var dt = document.getElementById("dailyTip");
     if (dt) dt.innerText = "Tip: ⬇️ Baja controlado · ⏸️ Mantén la tensión · ⬆️ Sube con fuerza";
+
+    // Exponer funciones al scope global
+    window.buildInlineDetailHTML  = buildInlineDetailHTML;
+    window.bindInlineDetailEvents = bindInlineDetailEvents;
+    window.renderRoutinesList     = renderRoutinesList;
+    window.FatigueUI = {
+        isFatigued:  function ()  { return _isFatigued; },
+        setFatigued: function (v) {
+            _isFatigued = !!v;
+            var t = document.getElementById("fatigueToggle");
+            if (t) t.checked = _isFatigued;
+            var fb = document.getElementById("fatigueBadge");
+            if (fb) fb.style.display = _isFatigued ? "block" : "none";
+            var fbl = document.getElementById("fatigueBlock");
+            if (fbl) fbl.classList.toggle("fatigue-active", _isFatigued);
+            _accordionOpenId = null; openDetailId = null; currentDetailRoutine = null;
+            renderRoutinesList();
+        }
+    };
+
+    // ── Robot de Transparencias ───────────────────────────────────────────
+    (function () {
+        var tpStyle  = document.createElement("style");
+        tpStyle.id   = "tpDynamicStyle";
+        document.head.appendChild(tpStyle);
+
+        var panel     = document.getElementById("transparencyPanel");
+        var toggleBtn = document.getElementById("transparencyToggleBtn");
+        var gSlider   = document.getElementById("tpGlobalSlider");
+        var bSlider   = document.getElementById("tpBlurSlider");
+        var gVal      = document.getElementById("tpGlobalVal");
+        var bVal      = document.getElementById("tpBlurVal");
+        var presets   = document.querySelectorAll(".tp-preset");
+
+        function applyTP(opacity, blur) {
+            var blurPx = blur + "px";
+            var blurHalf = Math.round(blur * 0.6) + "px";
+            tpStyle.textContent =
+                ".app-container{background:rgba(1,8,20," + (0.05 + opacity * 0.003).toFixed(3) + ") !important}" +
+                ".modal-content{background:rgba(2,8,20," + (0.20 + opacity * 0.005).toFixed(3) + ") !important;backdrop-filter:blur(" + blurPx + ") !important;-webkit-backdrop-filter:blur(" + blurPx + ") !important}" +
+                ".routine-card,.stat-card{background:rgba(255,255,255," + (0.01 + opacity * 0.0006).toFixed(4) + ") !important;backdrop-filter:blur(" + blurHalf + ") !important}" +
+                ".welcome-card{background:rgba(7,137,48," + (0.04 + opacity * 0.002).toFixed(3) + ") !important}" +
+                ".intro-screen{background:rgba(0,0,0," + (0.08 + opacity * 0.008).toFixed(3) + ") !important;backdrop-filter:blur(" + blurPx + ") !important;-webkit-backdrop-filter:blur(" + blurPx + ") !important}" +
+                ".app-header{background:rgba(0,0,0," + (0.04 + opacity * 0.001).toFixed(3) + ") !important}" +
+                ".modal.training-modal .modal-content{background:rgba(2,8,20," + (0.28 + opacity * 0.005).toFixed(3) + ") !important;backdrop-filter:blur(" + blurPx + ") !important}" +
+                ".modal.training-modal::before{background:rgba(1,7,18," + (0.10 + opacity * 0.004).toFixed(3) + ") !important}";
+        }
+
+        function setPreset(name) {
+            presets.forEach(function (b) { b.classList.toggle("active", b.dataset.preset === name); });
+            document.body.classList.remove("tp-opaque", "tp-glass");
+            if (name === "opaque") {
+                document.body.classList.add("tp-opaque");
+                if (gSlider) gSlider.value = 100; if (bSlider) bSlider.value = 0;
+                if (gVal) gVal.textContent = "100%"; if (bVal) bVal.textContent = "0px";
+                tpStyle.textContent = "";
+            } else if (name === "glass") {
+                document.body.classList.add("tp-glass");
+                if (gSlider) gSlider.value = 0; if (bSlider) bSlider.value = 4;
+                if (gVal) gVal.textContent = "0%"; if (bVal) bVal.textContent = "4px";
+                tpStyle.textContent = "";
+            } else { // balanced
+                if (gSlider) gSlider.value = 50; if (bSlider) bSlider.value = 10;
+                if (gVal) gVal.textContent = "50%"; if (bVal) bVal.textContent = "10px";
+                applyTP(50, 10);
+            }
+        }
+
+        if (toggleBtn && panel) {
+            toggleBtn.addEventListener("click", function (e) {
+                e.stopPropagation();
+                panel.classList.toggle("open");
+            });
+            document.addEventListener("click", function (e) {
+                if (!panel.contains(e.target) && e.target !== toggleBtn) panel.classList.remove("open");
+            });
+        }
+        if (gSlider) {
+            gSlider.addEventListener("input", function () {
+                var v = parseInt(gSlider.value);
+                if (gVal) gVal.textContent = v + "%";
+                document.body.classList.remove("tp-opaque", "tp-glass");
+                applyTP(v, parseInt(bSlider ? bSlider.value : 10));
+                presets.forEach(function (b) { b.classList.remove("active"); });
+            });
+        }
+        if (bSlider) {
+            bSlider.addEventListener("input", function () {
+                var v = parseInt(bSlider.value);
+                if (bVal) bVal.textContent = v + "px";
+                document.body.classList.remove("tp-opaque", "tp-glass");
+                applyTP(parseInt(gSlider ? gSlider.value : 50), v);
+                presets.forEach(function (b) { b.classList.remove("active"); });
+            });
+        }
+        presets.forEach(function (btn) {
+            btn.addEventListener("click", function () { setPreset(btn.dataset.preset); });
+        });
+
+        setPreset("balanced");
+    })();
 
 });
