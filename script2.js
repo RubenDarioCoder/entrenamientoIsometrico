@@ -296,8 +296,6 @@ document.addEventListener("DOMContentLoaded", function () {
         else if (isSameExercise)  text += ", siguiente serie";
         speakImmediate(text);
     }
-
-    // scheduleRestSpeech: avisa a 30s, 10s y 3-2-1
     function scheduleRestSpeech(totalSec, nextName, isSameExercise, side) {
         clearRestSpeech();
         if (!voiceEnabled) return;
@@ -1149,7 +1147,7 @@ document.addEventListener("DOMContentLoaded", function () {
         updateCountersUI();
         currentPhase = getStartPhase(ex.id, ex.phases);
         updateTrainingPhaseImages(ex.id);
-        if (isUnilateral) speakSide(currentSide);
+        
         startPhase();
     }
 
@@ -2082,87 +2080,5 @@ document.addEventListener("DOMContentLoaded", function () {
             renderRoutinesList();
         }
     };
-
-    // ── Robot de Transparencias ───────────────────────────────────────────
-    (function () {
-        var tpStyle  = document.createElement("style");
-        tpStyle.id   = "tpDynamicStyle";
-        document.head.appendChild(tpStyle);
-
-        var panel     = document.getElementById("transparencyPanel");
-        var toggleBtn = document.getElementById("transparencyToggleBtn");
-        var gSlider   = document.getElementById("tpGlobalSlider");
-        var bSlider   = document.getElementById("tpBlurSlider");
-        var gVal      = document.getElementById("tpGlobalVal");
-        var bVal      = document.getElementById("tpBlurVal");
-        var presets   = document.querySelectorAll(".tp-preset");
-
-        function applyTP(opacity, blur) {
-            var blurPx = blur + "px";
-            var blurHalf = Math.round(blur * 0.6) + "px";
-            tpStyle.textContent =
-                ".app-container{background:rgba(1,8,20," + (0.05 + opacity * 0.003).toFixed(3) + ") !important}" +
-                ".modal-content{background:rgba(2,8,20," + (0.20 + opacity * 0.005).toFixed(3) + ") !important;backdrop-filter:blur(" + blurPx + ") !important;-webkit-backdrop-filter:blur(" + blurPx + ") !important}" +
-                ".routine-card,.stat-card{background:rgba(255,255,255," + (0.01 + opacity * 0.0006).toFixed(4) + ") !important;backdrop-filter:blur(" + blurHalf + ") !important}" +
-                ".welcome-card{background:rgba(7,137,48," + (0.04 + opacity * 0.002).toFixed(3) + ") !important}" +
-                ".intro-screen{background:rgba(0,0,0," + (0.08 + opacity * 0.008).toFixed(3) + ") !important;backdrop-filter:blur(" + blurPx + ") !important;-webkit-backdrop-filter:blur(" + blurPx + ") !important}" +
-                ".app-header{background:rgba(0,0,0," + (0.04 + opacity * 0.001).toFixed(3) + ") !important}" +
-                ".modal.training-modal .modal-content{background:rgba(2,8,20," + (0.28 + opacity * 0.005).toFixed(3) + ") !important;backdrop-filter:blur(" + blurPx + ") !important}" +
-                ".modal.training-modal::before{background:rgba(1,7,18," + (0.10 + opacity * 0.004).toFixed(3) + ") !important}";
-        }
-
-        function setPreset(name) {
-            presets.forEach(function (b) { b.classList.toggle("active", b.dataset.preset === name); });
-            document.body.classList.remove("tp-opaque", "tp-glass");
-            if (name === "opaque") {
-                document.body.classList.add("tp-opaque");
-                if (gSlider) gSlider.value = 100; if (bSlider) bSlider.value = 0;
-                if (gVal) gVal.textContent = "100%"; if (bVal) bVal.textContent = "0px";
-                tpStyle.textContent = "";
-            } else if (name === "glass") {
-                document.body.classList.add("tp-glass");
-                if (gSlider) gSlider.value = 0; if (bSlider) bSlider.value = 4;
-                if (gVal) gVal.textContent = "0%"; if (bVal) bVal.textContent = "4px";
-                tpStyle.textContent = "";
-            } else { // balanced
-                if (gSlider) gSlider.value = 50; if (bSlider) bSlider.value = 10;
-                if (gVal) gVal.textContent = "50%"; if (bVal) bVal.textContent = "10px";
-                applyTP(50, 10);
-            }
-        }
-
-        if (toggleBtn && panel) {
-            toggleBtn.addEventListener("click", function (e) {
-                e.stopPropagation();
-                panel.classList.toggle("open");
-            });
-            document.addEventListener("click", function (e) {
-                if (!panel.contains(e.target) && e.target !== toggleBtn) panel.classList.remove("open");
-            });
-        }
-        if (gSlider) {
-            gSlider.addEventListener("input", function () {
-                var v = parseInt(gSlider.value);
-                if (gVal) gVal.textContent = v + "%";
-                document.body.classList.remove("tp-opaque", "tp-glass");
-                applyTP(v, parseInt(bSlider ? bSlider.value : 10));
-                presets.forEach(function (b) { b.classList.remove("active"); });
-            });
-        }
-        if (bSlider) {
-            bSlider.addEventListener("input", function () {
-                var v = parseInt(bSlider.value);
-                if (bVal) bVal.textContent = v + "px";
-                document.body.classList.remove("tp-opaque", "tp-glass");
-                applyTP(parseInt(gSlider ? gSlider.value : 50), v);
-                presets.forEach(function (b) { b.classList.remove("active"); });
-            });
-        }
-        presets.forEach(function (btn) {
-            btn.addEventListener("click", function () { setPreset(btn.dataset.preset); });
-        });
-
-        setPreset("balanced");
-    })();
 
 });
