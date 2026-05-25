@@ -219,7 +219,7 @@ body.phase-rest .app-container{border-color:rgba(139,92,246,0.5);box-shadow:0 0 
 .routine-card-wrapper .routine-card{border-radius:14px;margin-bottom:0}
 .btn-load-routine{display:block;width:100%;margin-top:10px;padding:9px 14px;background:rgba(7,137,48,0.15);border:1.5px solid rgba(7,137,48,0.4);border-radius:30px;color:#078930;font-weight:700;font-size:0.8rem;cursor:pointer;transition:all 0.2s;text-align:center;letter-spacing:0.02em}
 .btn-load-routine:hover{background:rgba(7,137,48,0.3);border-color:#078930;color:#fff}
-.routine-inline-detail{background:rgba(7,137,48,0.04);border:1px solid rgba(7,137,48,0.18);border-top:none;border-radius:0 0 16px 16px;padding:14px;animation:fadeIn 0.22s}
+.routine-inline-detail{background:transparent;border:1px solid rgba(7,137,48,0.18);border-top:none;border-radius:0 0 16px 16px;padding:0;animation:fadeIn 0.22s}
 .routine-inline-detail .routine-detail{background:transparent;border:none;padding:0;margin:0}
 
 /* Detail interior */
@@ -842,7 +842,7 @@ body.phase-rest .app-container{border-color:rgba(139,92,246,0.5);box-shadow:0 0 
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.38s cubic-bezier(0.4, 0, 0.2, 1);
-  background: rgba(7, 137, 48, 0.04);
+  background: rgba(0, 0, 0, 0);
   border: 1px solid rgba(7, 137, 48, 0.0);
   border-top: none;
   border-radius: 0 0 16px 16px;
@@ -855,6 +855,10 @@ body.phase-rest .app-container{border-color:rgba(139,92,246,0.5);box-shadow:0 0 
 
 .accordion-panel-inner {
   padding: 14px;
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 0 0 14px 14px;
 }
 
 /* Flecha en el botón de carga cuando el acordeón está abierto */
@@ -1029,7 +1033,7 @@ body.phase-rest .app-container{border-color:rgba(139,92,246,0.5);box-shadow:0 0 
 .splash-ring{
   position:absolute;inset:0;border-radius:50%;
   border:2.5px solid transparent;
-  border-top-color:#078930;border-right-color:#fcdd09;
+  border-top-color:#078930;border-right-color:#fcdd09;border-bottom-color: #da121a;
   animation:splashSpin 1.2s linear infinite;
 }
 @keyframes splashSpin{to{transform:rotate(360deg)}}
@@ -1049,7 +1053,7 @@ body.phase-rest .app-container{border-color:rgba(139,92,246,0.5);box-shadow:0 0 
 }
 .splash-bar{
   height:100%;width:0%;
-  background:linear-gradient(90deg,#078930,#fcdd09);
+  background:linear-gradient(90deg,#078930,#fcdd09,#da121a);
   border-radius:3px;
   transition:width 1.8s cubic-bezier(0.4,0,0.2,1);
 }
@@ -1087,69 +1091,12 @@ body.phase-rest .app-container{border-color:rgba(139,92,246,0.5);box-shadow:0 0 
   border:1px solid rgba(255,255,255,0.10) !important;
 }
 
-/* ═══ ROBOT DE TRANSPARENCIAS ══════════════════════════════════════════ */
-/* Paleta flotante — toggle visible en esquina */
-#transparencyRobot{
-  position:fixed;bottom:24px;right:16px;z-index:8000;
-  display:flex;flex-direction:column;align-items:flex-end;gap:8px;
-}
-#transparencyToggleBtn{
-  width:46px;height:46px;border-radius:50%;
-  background:rgba(7,137,48,0.88);
-  border:2px solid rgba(255,255,255,0.2);
-  color:#fff;font-size:1.2rem;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 18px rgba(0,0,0,0.5);
-  transition:transform 0.2s;
-}
-#transparencyToggleBtn:hover{transform:scale(1.1)}
-#transparencyPanel{
-  background:rgba(8,16,32,0.95);
-  backdrop-filter:blur(16px);
-  border:1px solid rgba(255,255,255,0.12);
-  border-radius:16px;padding:14px 16px;
-  display:none;flex-direction:column;gap:10px;
-  min-width:220px;
-  box-shadow:0 8px 32px rgba(0,0,0,0.6);
-  animation:fadeIn 0.2s;
-}
-#transparencyPanel.open{display:flex}
-.tp-label{font-size:0.65rem;color:#64748b;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:2px}
-.tp-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.tp-row span{font-size:0.78rem;color:#e2e8f0}
-.tp-slider{
-  -webkit-appearance:none;appearance:none;
-  width:90px;height:4px;border-radius:4px;
-  background:rgba(255,255,255,0.15);outline:none;cursor:pointer;
-}
-.tp-slider::-webkit-slider-thumb{
-  -webkit-appearance:none;width:16px;height:16px;
-  border-radius:50%;background:#078930;cursor:pointer;
-  border:2px solid #fff;
-}
-.tp-val{font-size:0.7rem;color:#fcdd09;font-weight:700;min-width:28px;text-align:right}
-.tp-preset-row{display:flex;gap:6px;margin-top:4px}
-.tp-preset{flex:1;padding:6px 4px;border:1px solid rgba(255,255,255,0.1);border-radius:8px;background:rgba(255,255,255,0.05);color:#94a3b8;font-size:0.65rem;font-weight:700;cursor:pointer;text-align:center;transition:all 0.15s}
-.tp-preset:hover,.tp-preset.active{background:rgba(7,137,48,0.25);border-color:#078930;color:#fff}
-
-/* ─── Modo OPACO (transparencias=0) ─────────────────────────────────── */
-body.tp-opaque .app-container{background:rgba(8,14,26,0.97) !important}
-body.tp-opaque .modal-content{background:rgba(8,14,26,0.97) !important}
-body.tp-opaque .routine-card{background:rgba(14,22,40,0.96) !important}
-body.tp-opaque .stat-card{background:rgba(14,22,40,0.96) !important}
-body.tp-opaque .welcome-card{background:rgba(7,137,48,0.22) !important}
-body.tp-opaque .intro-screen{background:rgba(4,8,6,0.96) !important;backdrop-filter:none !important}
-body.tp-opaque .app-header{background:rgba(4,10,20,0.98) !important}
-body.tp-opaque .modal.training-modal::before{background:rgba(1,6,16,0.92) !important}
-body.tp-opaque .modal.training-modal .modal-content{background:rgba(4,10,22,0.97) !important}
-
-/* ─── Modo TRANSPARENTE (transparencias=máx) ─────────────────────────── */
-body.tp-glass .app-container{background:transparent !important;backdrop-filter:none !important}
-body.tp-glass .modal-content{background:rgba(0,0,0,0.08) !important;backdrop-filter:blur(4px) !important}
-body.tp-glass .routine-card{background:rgba(255,255,255,0.02) !important;backdrop-filter:blur(4px) !important}
-body.tp-glass .stat-card{background:rgba(255,255,255,0.02) !important}
-body.tp-glass .welcome-card{background:rgba(7,137,48,0.04) !important}
-body.tp-glass .intro-screen{background:rgba(0,0,0,0.08) !important;backdrop-filter:blur(4px) !important}
-body.tp-glass .app-header{background:transparent !important}
-body.tp-glass .modal.training-modal::before{background:rgba(0,0,0,0.08) !important}
-body.tp-glass .modal.training-modal .modal-content{background:rgba(0,0,0,0.10) !important}
+/* ═══ TRANSPARENCIAS FIJAS (opacidad=0, blur=15px) ═════════════════════ */
+.app-container{background:transparent !important}
+.modal-content{background:rgba(2,8,20,0.20) !important;backdrop-filter:blur(15px) !important;-webkit-backdrop-filter:blur(15px) !important}
+.routine-card,.stat-card{background:rgba(255,255,255,0.01) !important;backdrop-filter:blur(9px) !important;-webkit-backdrop-filter:blur(9px) !important}
+.welcome-card{background:rgba(7,137,48,0.04) !important}
+.intro-screen{background:rgba(0,0,0,0.08) !important;backdrop-filter:blur(15px) !important;-webkit-backdrop-filter:blur(15px) !important}
+.app-header{background:rgba(0,0,0,0.04) !important}
+.modal.training-modal .modal-content{background:rgba(2,8,20,0.28) !important;backdrop-filter:blur(15px) !important;-webkit-backdrop-filter:blur(15px) !important}
+.modal.training-modal::before{background:rgba(1,7,18,0.10) !important}
