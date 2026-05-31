@@ -281,8 +281,9 @@ document.addEventListener("DOMContentLoaded", function () {
         else if (s === 2) speakImmediate("Dos");
         else if (s === 1) speakImmediate("Uno");
     }
-    function speakTenSecPrep(exName, side) {
+    function speakTenSecPrep(exName, side, serieNum, serieTotal) {
         var text = "Diez segundos para " + exName;
+        if (serieNum && serieTotal) text += " serie " + serieNum + " de " + serieTotal;
         if (side === "right")     text += " lado derecho";
         else if (side === "left") text += " lado izquierdo";
         text += ", prepárate";
@@ -666,7 +667,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (secondsLeft === 10 && !tenSecPrepSpoken) {
             tenSecPrepSpoken = true;
             var ex = currentRoutine && currentRoutine.exercises[currentExerciseIndex];
-            if (ex) speakTenSecPrep(ex.name, currentSide);
+            if (ex) speakTenSecPrep(ex.name, currentSide, currentSet, ex.series || 3);
         }
     }
 
@@ -1322,8 +1323,11 @@ document.addEventListener("DOMContentLoaded", function () {
         // Anuncio inicial de descanso
         if (isSameEx) {
             // Cambio de lado (unilateral) o descanso entre series
-            if (side === "right" || side === "left") {
-                speak("Descansa. Prepárate para lado " + (side === "right" ? "derecho" : "izquierdo"));
+            if (side === "left") {
+                speak("Descansa. Lado izquierdo.");
+            } else if (side === "right") {
+                var totalSeries = currentRoutine.exercises[currentExerciseIndex].series || 3;
+                speak("Descansa. Serie " + currentSet + " de " + totalSeries + ". Lado derecho.");
             } else {
                 speak("Descansa. Serie " + currentSet + " de " + (currentRoutine.exercises[currentExerciseIndex].series || 3) + ".");
             }
@@ -2080,5 +2084,6 @@ document.addEventListener("DOMContentLoaded", function () {
             renderRoutinesList();
         }
     };
+                          
 
 });
