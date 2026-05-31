@@ -377,7 +377,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function getStartPhase(exerciseId, phases) {
         // Ejercicios isométricos puros
-        var pureIso = ["plank","side_plank","dead_bug","copenhagen_plank",
+        var pureIso = ["plank","side_plank","copenhagen_plank",
                        "pallof_press","farmer_walk","wall_sit","suitcase_carry"];
         if (pureIso.indexOf(exerciseId) !== -1) return "isometric";
 
