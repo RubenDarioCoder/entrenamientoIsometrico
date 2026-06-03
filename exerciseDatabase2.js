@@ -76,7 +76,7 @@ const exerciseLibrary = [
     phaseInstructions: {
       eccentric: "Baja la barra con codos a 45°. Control total, toca el pecho suavemente.",
       isometric: "Barra en contacto con el pecho. Tensión máxima. No rebotes.",
-      concentric: "Empuja explosivo hacia arriba y ligeramente hacia los pies. Exhala."
+      concentric: "¡Empuja la barra hacia arriba con toda la fuerza! Extiende los codos. Exhala."
     },
     phases: { eccentric: 3, isometric: 1, concentric: 2, rest: 90 },
     genderPhases: {
@@ -139,7 +139,7 @@ const exerciseLibrary = [
     alternative: "dumbbell_row",
     description: "Las dominadas desarrollan la espalda y bíceps con el peso corporal. La fase excéntrica lenta produce daño mecánico mínimo comparado con el trabajo concéntrico (IST vs TST). El entrenamiento isométrico en rango parcial mejora la fuerza en ese ángulo articular ±20° según investigaciones de González y Gorostiaga.",
     phaseInstructions: {
-      concentric: "Tira con los codos hacia abajo. Piensa en llevar los codos a las caderas. Exhala.",
+      concentric: "¡Tira los codos hacia las caderas! Piensa en doblar la barra con las manos. Exhala.",
       isometric: "Barbilla sobre la barra. Contrae dorsales y bíceps al máximo.",
       eccentric: "Baja con control total. 3 segundos hasta extensión completa. Escápulas deprimidas.",
     },
@@ -233,9 +233,9 @@ const exerciseLibrary = [
     isActiveRecovery: false,
     description: "El curl de bíceps con fase isométrica en el punto de máxima tensión (90°) maximiza el reclutamiento de unidades motoras. Zou et al. (2023) demostraron que un programa isométrico de 9 semanas incrementó tanto el tamaño muscular como la fuerza máxima en flexores del codo, especialmente con combinación de alta y baja intensidad.",
     phaseInstructions: {
-      concentric: "Sube con control hacia el hombro. Exhala. Gira la muñeca al final.",
+      concentric: "Flexiona el codo hacia el hombro. Exhala. Gira la muñeca al llegar arriba.",
       isometric: "Codo a 90°. Contraer bíceps al máximo. Muñeca neutra.",
-      eccentric: "Baja con control total hasta extensión completa del codo. No balancees.",
+      eccentric: "Extiende el codo lentamente hasta abajo. No balancees el torso.",
     },
     phases: { eccentric: 3, isometric: 1, concentric: 2, rest: 60 },
     genderPhases: {
@@ -295,11 +295,12 @@ const exerciseLibrary = [
     difficulty: "principiante",
     equipment: "polea",
     isActiveRecovery: false,
+    alternative: "tube_band_tricep_extension",
     description: "La extensión de tríceps en polea permite aislar el tríceps con carga constante. La contracción isométrica en extensión completa es altamente efectiva para la tendinopatía tricipital, reduciendo el dolor con analgesia inmediata similar a lo descrito por Rio et al. (2017) para contracciones isométricas vs isotónicas.",
     phaseInstructions: {
-      eccentric: "Codo se flexiona lentamente. Control total. Codos pegados al cuerpo.",
+      eccentric: "Flexiona el codo lentamente. Control total. Codos pegados al cuerpo.",
       isometric: "Extensión completa del codo. Tríceps contraído al máximo.",
-      concentric: "Extiende el codo con fuerza. Codos inmóviles durante todo el movimiento."
+      concentric: "¡Empuja hacia abajo con fuerza! Codos inmóviles. Exhala al extender."
     },
     phases: { eccentric: 2, isometric: 1, concentric: 1, rest: 60 },
     genderPhases: {
@@ -329,7 +330,7 @@ const exerciseLibrary = [
     isActiveRecovery: false,
     description: "El remo con barra desarrolla la espalda media y gruesa con alta carga. La pausa isométrica con escápulas retraídas activa romboides y trapecio medio con máxima intensidad. El trabajo de los extensores lumbares en posición inclinada refuerza la estabilidad raquídea isométricamente.",
     phaseInstructions: {
-      concentric: "Jala con los codos hacia atrás. Piensa en apretar un lápiz entre los omóplatos. Exhala.",
+      concentric: "¡Tira los codos hacia atrás y arriba! Piensa en apretar un lápiz entre los omóplatos. Exhala.",
       isometric: "Barra pegada al abdomen. Escápulas totalmente retraídas y deprimidas.",
       eccentric: "Extiende los codos controlado hacia abajo. Espalda neutra, torso inclinado 45°.",
     },
@@ -456,9 +457,10 @@ const exerciseLibrary = [
     difficulty: "principiante",
     equipment: "polea",
     isActiveRecovery: false,
+    alternative: "seated_row_band",
     description: "El remo en polea sentado permite trabajar la espalda media sin carga lumbar. La pausa isométrica con escápulas retraídas al máximo activa romboides y trapecio medio con carga constante durante toda la fase. Ideal como progresión en rehabilitación de hombro según los protocolos de Cook y Rio.",
     phaseInstructions: {
-      concentric: "Jala con codos a los lados del cuerpo. Piensa en llevar los codos a las caderas.",
+      concentric: "¡Tira los codos hacia las caderas! Piensa en esconder los codos detrás de la espalda.",
       isometric: "Mango contra el abdomen. Escápulas completamente retraídas y deprimidas.",
       eccentric: "Extiende los codos hacia adelante lento. Torso erecto durante todo el movimiento.",
     },
@@ -521,6 +523,7 @@ const exerciseLibrary = [
     difficulty: "intermedio",
     equipment: "polea baja",
     isActiveRecovery: false,
+    alternative: "hip_abduction",
     description: "El cable kickback aísla el glúteo mayor en extensión de cadera. La pausa isométrica en extensión máxima activa el 70-80% del glúteo mayor de forma selectiva. Fundamental en protocolos de activación glútea previos a ejercicios compuestos para mejorar la conexión neuromuscular.",
     phaseInstructions: {
       eccentric: "Flexiona la cadera hacia adelante controlado. Core activo. Espalda neutra.",
@@ -554,6 +557,7 @@ const exerciseLibrary = [
     difficulty: "principiante",
     equipment: "máquina",
     isActiveRecovery: false,
+    alternative: "hip_abduction",
     description: "La máquina abductora trabaja el glúteo medio y los abductores de cadera con carga aislada. La fuerza isométrica de abductores correlaciona con la capacidad de sprint repetido en mujeres futbolistas (Gonçalves et al., 2021). Reduce el riesgo de lesiones de rodilla valga y síndrome de cadera chasqueante.",
     phaseInstructions: {
       eccentric: "Cierra las piernas lentamente con control. Espalda apoyada en el respaldo.",
@@ -589,7 +593,7 @@ const exerciseLibrary = [
     alternative: "bicep_curl",
     description: "Las dominadas supinas priorizan el bíceps sobre el dorsal comparado con las dominadas pronadas. La fase excéntrica lenta de 5-6 segundos es el estímulo más eficaz para el bíceps distal y el tendón. El protocolo excéntrico de Alfredson adaptado se utiliza en recuperación de ruptura parcial del tendón distal del bíceps.",
     phaseInstructions: {
-      concentric: "Sube tirando con los codos. Supinación activa durante el movimiento. Exhala.",
+      concentric: "¡Tira los codos hacia abajo y atrás! Supinación activa durante el movimiento. Exhala.",
       isometric: "Barbilla sobre la barra. Bíceps completamente contraído. Aprieta con fuerza.",
       eccentric: "Baja con control absoluto. 5 segundos hasta extensión completa. Gira las muñecas.",
     },
@@ -651,9 +655,10 @@ const exerciseLibrary = [
     difficulty: "principiante",
     equipment: "polea alta",
     isActiveRecovery: false,
+    alternative: "tube_band_row_one_arm",
     description: "El jalón al pecho desarrolla el dorsal ancho con carga controlada. Es la alternativa a las dominadas para principiantes y en rehabilitación. La pausa isométrica con el mango cerca del pecho activa el gran dorsal y romboides con máxima contracción. El IST produce menor daño mecánico que el TST equivalente.",
     phaseInstructions: {
-      concentric: "Jala hacia el pecho llevando los codos hacia las caderas. Exhala.",
+      concentric: "¡Tira la barra hacia el pecho llevando los codos hacia las caderas! Exhala.",
       isometric: "Mango a nivel del mentón o pecho. Codos bajos. Escápulas juntas y bajas.",
       eccentric: "Extiende los codos hacia arriba lento. Mantén la postura erguida.",
     },
@@ -683,9 +688,10 @@ const exerciseLibrary = [
     difficulty: "principiante",
     equipment: "polea con cuerda",
     isActiveRecovery: false,
+    alternative: "tube_band_face_pull",
     description: "El face pull es el ejercicio preventivo más importante para la salud del hombro. La pausa isométrica con rotación externa máxima activa el infraespinoso y el redondo menor, músculos claves del manguito rotador. Según Cook y Rio, es ejercicio base de todo protocolo de rehabilitación y prevención de hombro.",
     phaseInstructions: {
-      concentric: "Tira hacia la cara con codos altos. Piensa en separar la cuerda al llegar.",
+      concentric: "¡Tira hacia tu cara separando la cuerda! Codos bien altos y hacia afuera. Exhala.",
       isometric: "Manos a nivel de la cara. Máxima rotación externa. Codos al frente.",
       eccentric: "Extiende los brazos hacia la polea lentamente. Codos a la altura de los hombros.",
     },
@@ -715,11 +721,12 @@ const exerciseLibrary = [
     difficulty: "principiante",
     equipment: "máquina",
     isActiveRecovery: false,
+    alternative: "goblet_squat",
     description: "La prensa de piernas permite carga elevada con menor riesgo lumbar que la sentadilla. La fase excéntrica lenta a diferentes ángulos de rodilla produce ganancias de fuerza específicas por ángulo ±20° (Bogdanis et al., 2018). Es el primer ejercicio de carga en protocolos de rehabilitación postoperatoria de rodilla.",
     phaseInstructions: {
       eccentric: "Rodillas se flexionan hasta 90°. Control total. Espalda apoyada.",
       isometric: "Rodillas a 90°. Tensión máxima en cuádriceps y glúteos. Sin que las rodillas colapsen.",
-      concentric: "Empuja el peso extendiendo rodillas y caderas. No bloquees las rodillas al final."
+      concentric: "¡Empuja la plataforma con los talones! Extiende caderas y rodillas. No bloquees las rodillas."
     },
     phases: { eccentric: 3, isometric: 1, concentric: 2, rest: 90 },
     genderPhases: {
@@ -842,6 +849,7 @@ const exerciseLibrary = [
     difficulty: "intermedio",
     equipment: "poleas cruzadas",
     isActiveRecovery: false,
+    alternative: "push_up",
     description: "Las aperturas en polea trabajan el pecho con tensión constante en todo el rango. La pausa isométrica en el cruce máximo activa el pectoral con máxima contracción. El IST ofrece menor daño mecánico que el TST, por lo que es preferible en fases tempranas de rehabilitación de hombro con buen control del rango.",
     phaseInstructions: {
       eccentric: "Abre los brazos lentamente con codos semiflexionados. Pecho abierto.",
@@ -1098,6 +1106,7 @@ const exerciseLibrary = [
     difficulty: "principiante",
     equipment: "máquina",
     isActiveRecovery: false,
+    alternative: "wall_sit",
     description: "La extensión de piernas aísla el cuádriceps con carga variable. La pausa isométrica en extensión completa es el protocolo más efectivo para tendinopatía rotuliana (protocolo de Rio et al.: 5x45s al 70% RM). Contracciones isométricas producen analgesia inmediata significativamente mayor que las isotónicas durante cuatro semanas de evaluación.",
     phaseInstructions: {
       eccentric: "Baja la pierna lentamente. Control total del cuádriceps durante todo el descenso.",
@@ -1130,6 +1139,7 @@ const exerciseLibrary = [
     difficulty: "principiante",
     equipment: "máquina",
     isActiveRecovery: false,
+    alternative: "nordic_curl",
     description: "El curl de piernas trabaja los isquiotibiales con carga aislada. La fase excéntrica lenta de 5 segundos es el mejor protocolo para el fortalecimiento isquiotibial en rehabilitación. Complementar con Nordic Curl en fase avanzada para máxima protección contra roturas musculares.",
     phaseInstructions: {
       eccentric: "Extiende la rodilla lentamente con control absoluto. 4-5 segundos.",
@@ -1164,7 +1174,7 @@ const exerciseLibrary = [
     isActiveRecovery: false,
     description: "El remo con mancuerna trabaja la espalda unilateralmente sin carga axial lumbar. Es la alternativa más accesible al remo con barra y a las dominadas. La pausa isométrica con escápula completamente retraída activa el gran dorsal y romboides con máxima contracción. Accesible en casa con una botella de agua.",
     phaseInstructions: {
-      concentric: "Jala el codo hacia el techo. Mantén el torso paralelo al suelo.",
+      concentric: "¡Tira el codo hacia el techo! Piensa en esconder el codo detrás de la espalda.",
       isometric: "Mancuerna a nivel del abdomen. Codo atrás. Escápula completamente retraída.",
       eccentric: "Extiende el codo hacia el suelo lento. Escápula hacia adelante controlado.",
     },
@@ -1199,7 +1209,7 @@ const exerciseLibrary = [
     phaseInstructions: {
       eccentric: "Baja las mancuernas rotando hacia adentro al mismo tiempo. Codos hacia adelante abajo.",
       isometric: "Mancuernas frente a los hombros en rotación interna. Tensión en deltoides.",
-      concentric: "Sube y rota hacia afuera simultáneamente. Extiende los brazos arriba."
+      concentric: "¡Empuja hacia arriba rotando las palmas hacia afuera simultáneamente! Exhala al extender."
     },
     phases: { eccentric: 3, isometric: 1, concentric: 2, rest: 90 },
     genderPhases: {
@@ -1227,6 +1237,7 @@ const exerciseLibrary = [
     difficulty: "avanzado",
     equipment: "cajón pliométrico",
     isActiveRecovery: false,
+    alternative: "jump_squat",
     description: "El salto al cajón desarrolla potencia explosiva de tren inferior. Lum et al. (2021 y 2022) encontraron que el entrenamiento isométrico combinado con pliometría mejora la altura del salto de contramovimiento (CMJ) de forma similar. Es el ejercicio final de fase de rehabilitación de tobillo y rodilla.",
     phaseInstructions: {
       eccentric: "Aterriza en el cajón absorbiendo el impacto con rodillas semiflexionadas.",
@@ -1292,6 +1303,7 @@ const exerciseLibrary = [
     difficulty: "intermedio",
     equipment: "polea",
     isActiveRecovery: true,
+    alternative: "tube_band_pallof_press_band",
     description: "El Pallof Press es el ejercicio antirotación más efectivo para la estabilidad lumbopélvica. La carga antirotación activa oblicuos y multífido de forma profunda. Excelente para estabilidad lumbo-pélvica en rehabilitación según los protocolos de McGill. La pausa isométrica con brazos extendidos maximiza el torque antirotacional sobre el core.",
     phaseInstructions: {
       eccentric: "Lleva las manos hacia el pecho controlado. Cuerpo completamente estable.",
@@ -1455,7 +1467,7 @@ const exerciseLibrary = [
     isActiveRecovery: true,
     description: "La separación de banda es el ejercicio de calentamiento y corrección postural más efectivo para el hombro. Activa deltoides posterior, romboides y trapecio medio en cada repetición. La pausa isométrica con la banda completamente estirada activa los retractores de escápula de forma máxima. Parte del calentamiento diario obligatorio.",
     phaseInstructions: {
-      concentric: "Separa las manos hacia los lados. Codos extendidos. Exhala.",
+      concentric: "¡Separa las manos tirando la banda hacia los lados! Codos extendidos. Exhala.",
       isometric: "Banda completamente estirada. Escápulas juntas. Máxima retracción.",
       eccentric: "Junta las manos hacia el frente controlado. Mantén los codos extendidos.",
     },
@@ -1551,7 +1563,7 @@ const exerciseLibrary = [
     isActiveRecovery: true,
     description: "El remo con banda es la primera opción en postoperatorio temprano de hombro. No genera carga axial lumbar y permite control exacto del rango. La pausa isométrica con escápulas retraídas al máximo activa romboides de forma segura. Accesible en casa, en cualquier lugar, sin necesidad de equipo de gym.",
     phaseInstructions: {
-      concentric: "Jala los codos hacia atrás. Codos pegados al cuerpo.",
+      concentric: "¡Tira los codos hacia atrás pegados al cuerpo! Piensa en esconder los codos detrás de ti.",
       isometric: "Manos al abdomen. Escápulas completamente retraídas y deprimidas.",
       eccentric: "Extiende los brazos hacia adelante lentamente. Torso erecto.",
     },
@@ -1848,6 +1860,39 @@ const exerciseLibrary = [
   },
   
   { id: "tube_band_chest_press", name: "Press de Pecho con Banda Tubular", type: "Compuesto", targetMuscles: ["pecho", "hombros", "tríceps"], gender: "both", difficulty: "principiante", equipment: "banda con manijas", isActiveRecovery: false, description: "Ancla la banda a la altura del pecho (puerta, poste o pisándola con ambos pies). La banda tubular genera resistencia ascendente continua: a diferencia del peso libre, la tensión se incrementa en la fase concéntrica final (máxima extensión del codo), lo que coincide con la zona de menor ventaja mecánica del pectoral. Esto fuerza un reclutamiento adicional de unidades motoras en el rango de extensión completa. La pausa isométrica a codos a 90° —punto de máxima tensión isométrica del pectoral mayor clavicular— cumple el principio de Hettinger: 1 contracción sostenida al 65% genera adaptaciones de fuerza del 5% semanal. La excéntrica lenta de 3-4s amplifica el daño mecánico controlado y favorece la síntesis proteica (Schoenfeld, 2012).", phaseInstructions: { eccentric: "Deja que la banda lleve los codos hacia atrás con control total. 4 segundos. Pecho abierto, escápulas retraídas.", isometric: "Codos a 90°. Pausa completa. Máxima tensión isométrica en pectoral. No rebotes.", concentric: "Empuja hacia adelante hasta extensión casi completa. Exhala. Mantén escápulas deprimidas." }, phases: { eccentric: 4, isometric: 2, concentric: 2, rest: 60 }, genderPhases: { female: { eccentric: 4, isometric: 3, concentric: 2, rest: 45 }, male: { eccentric: 4, isometric: 2, concentric: 2, rest: 60 }, }, seriesDefault: 3, repsDefault: 12, caloriesPerMinute: 6, rehab: { injury: "Hombro", protocol: "Banda de tensión mínima. Rango parcial sin dolor.", phases: { eccentric: 4, isometric: 3, concentric: 2, rest: 90 }, series: 3, reps: 10, notes: "Ideal en postoperatorio de hombro: la resistencia variable permite progresar sin sobrecargar la articulación glenohumeral.", }, }, { id: "tube_band_row_one_arm", name: "Remo Unilateral con Banda Tubular", type: "Compuesto", targetMuscles: ["espalda media", "bíceps", "romboides", "core"], gender: "both", difficulty: "principiante", equipment: "banda con manijas", isActiveRecovery: false, unilateral: true, description: "Ancla la banda frente a ti a la altura del pecho. El trabajo unilateral elimina las compensaciones de dominancia lateral documentadas por Youdas et al. (2010): el lado dominante suele generar 8-12% más fuerza, enmascarando déficits en el lado no dominante. La excéntrica lenta de 3-4s en el remo unilateral produce una tensión isométrica estabilizadora en el core contralateral (cuadrado lumbar, oblicuo externo), entrenando la antirotación lumbar sin carga axial. La pausa isométrica con escápula completamente retraída activa el romboides mayor y trapecio medio según el protocolo de activación de Cook (2010).", phaseInstructions: { concentric: "Jala el codo hacia atrás y arriba. Retrae la escápula antes que el codo. Exhala.", isometric: "Mango al costado del pecho. Escápula completamente retraída. Pausa completa.", eccentric: "Extiende el codo lento hacia adelante. 4 segundos. Mantén torso rígido sin rotar." }, phases: { eccentric: 4, isometric: 2, concentric: 2, rest: 60 }, genderPhases: { female: { eccentric: 4, isometric: 3, concentric: 2, rest: 45 }, male: { eccentric: 4, isometric: 2, concentric: 2, rest: 60 }, }, seriesDefault: 3, repsDefault: 10, caloriesPerMinute: 6, rehab: { injury: "Lumbar", protocol: "Torso apoyado en banco inclinado. Elimina carga lumbar.", phases: { eccentric: 4, isometric: 2, concentric: 2, rest: 90 }, series: 3, reps: 10, notes: "El trabajo unilateral con soporte permite rehabilitar el romboides sin comprometer la columna.", }, }, { id: "tube_band_shoulder_press", name: "Press de Hombros con Banda Tubular", type: "Compuesto", targetMuscles: ["hombros", "tríceps", "core"], gender: "both", difficulty: "principiante", equipment: "banda con manijas", isActiveRecovery: false, description: "Pisa la banda con ambos pies al ancho de los hombros. La curva ascendente de resistencia de la banda tubular genera máxima tensión en la extensión final del codo, justo donde el peso libre tiene mínima resistencia. Esto activa el trapecio superior y el deltoides medial en el rango de máxima elevación, que el press con barra no alcanza. El método de Hoffman (multiangle IST a 45°, 90° y 135°) es la base científica: cada ángulo articular desarrolla fuerza específica ±20° (González y Gorostiaga). La pausa isométrica a 90° de codo activa las fibras del deltoides anterior con mayor tiempo bajo tensión que el movimiento dinámico puro.", phaseInstructions: { eccentric: "Baja las manijas hacia los hombros con control. 4 segundos. Codos ligeramente adelantados.", isometric: "Manijas a la altura de los hombros. Pausa completa. Tensión máxima en deltoides.", concentric: "Empuja hacia arriba hasta casi extender los codos. No bloquees. Exhala." }, phases: { eccentric: 4, isometric: 2, concentric: 2, rest: 60 }, genderPhases: { female: { eccentric: 4, isometric: 3, concentric: 2, rest: 45 }, male: { eccentric: 4, isometric: 2, concentric: 2, rest: 60 }, }, seriesDefault: 3, repsDefault: 12, caloriesPerMinute: 6, rehab: { injury: "Hombro", protocol: "Banda mínima. Rango parcial hasta 90°. Sin elevación completa.", phases: { eccentric: 4, isometric: 3, concentric: 2, rest: 90 }, series: 3, reps: 10, notes: "Evitar elevación completa en impingement subacromial. Rango libre de dolor.", }, }, { id: "tube_band_bicep_curl", name: "Curl de Bíceps con Banda Tubular", type: "Aislamiento", targetMuscles: ["bíceps", "braquial", "braquiorradial"], gender: "both", difficulty: "principiante", equipment: "banda con manijas", isActiveRecovery: false, description: "Pisa la banda con ambos pies. La resistencia variable de la banda genera la máxima tensión en el punto de máxima tensión del bíceps (90° de flexión de codo), que coincide con la pausa isométrica de este protocolo. Esto corrige una limitación del curl con peso libre, donde la resistencia es máxima a 90° pero el músculo es más fuerte a 60-70°. Zou et al. (2023) demostraron que el entrenamiento isométrico de 9 semanas de los flexores del codo incrementa tanto el CSA (área de sección transversal) como la fuerza máxima, especialmente con la combinación de alta intensidad (70-100% MVIC) y pausa de 2-3 segundos.", phaseInstructions: { concentric: "Sube las manijas hacia los hombros con control. Exhala. Codos fijos al cuerpo.", isometric: "Codos a 90°. Máxima contracción de bíceps. Muñecas neutras. Pausa completa.", eccentric: "Baja con control total hacia extensión completa. 4 segundos. Sin balanceo de torso." }, phases: { eccentric: 4, isometric: 2, concentric: 2, rest: 45 }, genderPhases: { female: { eccentric: 4, isometric: 3, concentric: 2, rest: 30 }, male: { eccentric: 4, isometric: 2, concentric: 2, rest: 45 }, }, seriesDefault: 3, repsDefault: 12, caloriesPerMinute: 5, rehab: { injury: "Codo/Bíceps", protocol: "Banda mínima. Excéntrico super lento 5s. Sin supinación forzada.", phases: { eccentric: 5, isometric: 2, concentric: 2, rest: 90 }, series: 3, reps: 10, notes: "Carga isométrica subumbral efectiva para tendinopatía distal del bíceps según Rio et al. (2017).", }, }, { id: "tube_band_tricep_extension", name: "Extensión de Tríceps con Banda Tubular", type: "Aislamiento", targetMuscles: ["tríceps"], gender: "both", difficulty: "principiante", equipment: "banda con manijas", isActiveRecovery: false, description: "Ancla la banda sobre la cabeza (puerta, barra alta) o pisa la banda y trabaja con extensión sobre la cabeza. La extensión de tríceps con banda sobre la cabeza estira la cabeza larga del tríceps braquial en su posición de máxima elongación (hombro en flexión completa), lo que según Maeo et al. (2021) produce hipertrofia hasta 40% superior en la cabeza larga comparado con ejercicios con el hombro en posición neutral. La pausa isométrica en extensión completa —punto de máxima tensión de la banda— anula el reflejo de estiramiento y maximiza la activación neural isométrica pura del tríceps.", phaseInstructions: { eccentric: "Flexiona los codos lentamente hacia atrás y arriba. 4 segundos. Codos apuntando al techo.", isometric: "Codos flexionados al máximo. Tríceps en máximo estiramiento. Pausa completa.", concentric: "Extiende los codos hacia arriba. Bloquea suavemente. Exhala al extender." }, phases: { eccentric: 4, isometric: 2, concentric: 2, rest: 45 }, genderPhases: { female: { eccentric: 4, isometric: 3, concentric: 2, rest: 30 }, male: { eccentric: 4, isometric: 2, concentric: 2, rest: 45 }, }, seriesDefault: 3, repsDefault: 12, caloriesPerMinute: 5, rehab: { injury: "Codo/Tríceps", protocol: "Banda mínima. Sin bloqueo completo del codo. Rango parcial sin dolor.", phases: { eccentric: 4, isometric: 3, concentric: 2, rest: 90 }, series: 3, reps: 10, notes: "Isométrico en rango medio para tendinopatía tricipital: analgesia inmediata (Rio et al., 2017).", }, }, { id: "tube_band_lateral_raise", name: "Elevación Lateral con Banda Tubular", type: "Aislamiento", targetMuscles: ["deltoides medial", "trapecio superior"], gender: "both", difficulty: "principiante", equipment: "banda con manijas", isActiveRecovery: false, description: "Pisa la banda con un pie o ambos pies. La curva de resistencia de la banda tubular replica perfectamente la curva de fuerza del deltoides medial: la resistencia aumenta conforme el brazo sube, coincidiendo con la mayor producción de fuerza del músculo (60-90° de abducción). Esto genera un estímulo de tensión constante superior al de la mancuerna, que tiene máxima resistencia sólo a 90° por la palanca gravitacional. La pausa isométrica a 90° de abducción corresponde al ángulo de máxima activación del deltoides medial según estudios electromiográficos (Reinold et al., 2007).", phaseInstructions: { concentric: "Sube los brazos lateralmente hasta la altura de los hombros. Codos ligeramente flexionados. Exhala.", isometric: "Brazos paralelos al suelo. Deltoides medial en contracción máxima. Pausa completa.", eccentric: "Baja los brazos con control total. 4 segundos. Resistencia continua hasta abajo." }, phases: { eccentric: 4, isometric: 2, concentric: 2, rest: 45 }, genderPhases: { female: { eccentric: 4, isometric: 3, concentric: 2, rest: 30 }, male: { eccentric: 4, isometric: 2, concentric: 2, rest: 45 }, }, seriesDefault: 3, repsDefault: 12, caloriesPerMinute: 5, rehab: { injury: "Hombro", protocol: "Banda mínima. Rango 0-60°. Sin elevar sobre la horizontal.", phases: { eccentric: 4, isometric: 2, concentric: 2, rest: 90 }, series: 3, reps: 12, notes: "Excelente para activación del manguito rotador en rehabilitación postoperatoria.", }, }, { id: "tube_band_squat", name: "Sentadilla con Banda Tubular", type: "Compuesto", targetMuscles: ["cuádriceps", "glúteos", "core"], gender: "both", difficulty: "principiante", equipment: "banda con manijas", isActiveRecovery: false, description: "Pisa la banda con ambos pies al ancho de los hombros, manijas a la altura de los hombros. La banda añade resistencia ascendente que es máxima en la extensión de rodilla —zona de mayor ventaja mecánica del cuádriceps—, lo opuesto al patrón del peso libre. Esto produce activación del cuádriceps en todo el rango articular con pico de tensión en extensión completa, efecto conocido como 'variable resistance training' (VRT). Heffernan et al. (2019) demostraron que el VRT con banda produce mayor activación EMG del vasto lateral y recto femoral en los últimos 30° de extensión comparado con la sentadilla con barra sola.", phaseInstructions: { eccentric: "Desciende lento con control. Rodillas sobre los pies. Pecho arriba. 4 segundos.", isometric: "Muslos paralelos al suelo o más abajo. Tensión máxima en cuádriceps y glúteos.", concentric: "Empuja el suelo, extiende caderas y rodillas juntas. Exhala. Tensión de banda al máximo arriba." }, phases: { eccentric: 4, isometric: 2, concentric: 2, rest: 60 }, genderPhases: { female: { eccentric: 4, isometric: 3, concentric: 2, rest: 45 }, male: { eccentric: 4, isometric: 2, concentric: 2, rest: 60 }, }, seriesDefault: 3, repsDefault: 12, caloriesPerMinute: 7, rehab: { injury: "Rodilla", protocol: "Rango parcial sin dolor. Isométrico prolongado en posición media.", phases: { eccentric: 4, isometric: 3, concentric: 2, rest: 90 }, series: 3, reps: 10, notes: "Sentadilla parcial isométrica con banda: protocolo de carga para tendinopatía rotuliana (Rio et al., 2017).", }, }, { id: "tube_band_romanian_deadlift", name: "Peso Muerto Rumano con Banda Tubular", type: "Compuesto", targetMuscles: ["isquiotibiales", "glúteos", "espalda baja"], gender: "both", difficulty: "principiante", equipment: "banda con manijas", isActiveRecovery: false, description: "Pisa la banda en el centro con ambos pies. La banda genera máxima resistencia en la extensión de cadera completa —posición erecta—, donde el glúteo mayor tiene la mayor capacidad de producir fuerza. Esto supera la limitación del peso libre, cuya resistencia es máxima durante el hinge (posición inclinada). La excéntrica lenta de 4 segundos estira los isquiotibiales con carga progresiva, replicando el estímulo del protocolo Oslo para la prevención de roturas musculares (Petersen et al., 2011). La pausa isométrica en el punto de máxima tensión de los isquiotibiales activa unidades motoras de alto umbral sin el riesgo de rotura propio de la sobrecarga excéntrica pura.", phaseInstructions: { eccentric: "Caderas hacia atrás. Espalda neutra. Siente el estiramiento progresivo de los isquiotibiales. 4 segundos.", isometric: "Pausa en el punto de máxima tensión. Sin dolor, solo tensión. Espalda plana.", concentric: "Activa glúteos primero, luego extiende caderas. La banda tira hacia abajo: resiste. Exhala." }, phases: { eccentric: 4, isometric: 2, concentric: 2, rest: 60 }, genderPhases: { female: { eccentric: 4, isometric: 3, concentric: 2, rest: 45 }, male: { eccentric: 4, isometric: 2, concentric: 2, rest: 60 }, }, seriesDefault: 3, repsDefault: 10, caloriesPerMinute: 7, rehab: { injury: "Isquiotibiales", protocol: "Rango limitado por tensión sin dolor. Excéntrico progresivo.", phases: { eccentric: 5, isometric: 2, concentric: 2, rest: 120 }, series: 3, reps: 8, notes: "Protocolo Oslo adaptado a banda: carga excéntrica progresiva sin riesgo de sobrecarga aguda.", }, }, { id: "tube_band_hip_thrust", name: "Empuje de Cadera con Banda Tubular", type: "Compuesto", targetMuscles: ["glúteos", "isquiotibiales", "core"], gender: "both", difficulty: "principiante", equipment: "banda con manijas", isActiveRecovery: false, description: "Pisa la banda con ambos pies y pasa las manijas sobre los muslos o caderas. La banda genera resistencia en el plano horizontal en la extensión de cadera completa, que es el ángulo donde el glúteo mayor produce su máxima fuerza. Hip thrust estudios de Contreras et al. (2011) muestran activación del glúteo mayor hasta 172% del MVIC —el más alto de todos los ejercicios de glúteo estudiados—. Con banda, esta activación se mantiene elevada durante toda la fase isométrica superior por la tensión continua, superando el hip thrust con barra sola donde la resistencia gravitacional cae a cero en extensión completa.", phaseInstructions: { eccentric: "Desciende las caderas controlado. La banda mantiene tensión en todo el rango. 3 segundos.", isometric: "Caderas completamente extendidas. Aprieta glúteos al máximo. Espalda neutra. Pausa completa.", concentric: "Sube empujando con talones. Activa glúteo antes de extender. La banda resiste arriba. Exhala." }, phases: { eccentric: 3, isometric: 3, concentric: 2, rest: 45 }, genderPhases: { female: { eccentric: 3, isometric: 3, concentric: 2, rest: 30 }, male: { eccentric: 3, isometric: 2, concentric: 2, rest: 45 }, }, seriesDefault: 3, repsDefault: 12, caloriesPerMinute: 6, rehab: { injury: "Cadera", protocol: "Banda mínima. Sin extensión lumbar compensatoria.", phases: { eccentric: 3, isometric: 3, concentric: 2, rest: 90 }, series: 3, reps: 10, notes: "Activación glútea sin carga axial: ideal en rehabilitación postquirúrgica de cadera.", }, }, { id: "tube_band_face_pull", name: "Face Pull con Banda Tubular", type: "Compuesto", targetMuscles: ["deltoides posterior", "manguito rotador", "trapecio medio"], gender: "both", difficulty: "principiante", equipment: "banda con manijas", isActiveRecovery: false, description: "Ancla la banda a la altura de los ojos. El face pull con banda tubular es el ejercicio de mayor activación del deltoides posterior y del manguito rotador externo (infraespinoso y redondo menor). La pausa isométrica con codos elevados y escápulas completamente retraídas activa el trapecio medio y los romboides en su posición de máxima tensión, corrigiendo la cifosis torácica y el síndrome cruzado superior. Cook (2010) lo incluye como ejercicio mandatorio en todos los protocolos de corrección postural y rehabilitación de hombro. La resistencia variable de la banda genera tensión máxima en retracción completa, donde la activación EMG del deltoides posterior es máxima.", phaseInstructions: { concentric: "Jala hacia la cara con codos elevados por encima de los hombros. Exhala. Manos hacia las orejas.", isometric: "Manos a nivel de las orejas. Codos altos. Escápulas completamente retraídas. Pausa completa.", eccentric: "Extiende los brazos hacia adelante con control total. 4 segundos. Sin protracción brusca." }, phases: { eccentric: 4, isometric: 2, concentric: 2, rest: 45 }, genderPhases: { female: { eccentric: 4, isometric: 3, concentric: 2, rest: 30 }, male: { eccentric: 4, isometric: 2, concentric: 2, rest: 45 }, }, seriesDefault: 3, repsDefault: 15, caloriesPerMinute: 5, rehab: { injury: "Hombro", protocol: "Banda mínima. Codos elevados. Sin dolor en retracción.", phases: { eccentric: 4, isometric: 3, concentric: 2, rest: 90 }, series: 3, reps: 15, notes: "Ejercicio base en rehabilitación de manguito rotador: activa los rotadores externos con carga controlada.", }, }, { id: "tube_band_woodchop_high", name: "Leñador Alto con Banda Tubular", type: "Compuesto", targetMuscles: ["oblicuos", "core", "hombros", "caderas"], gender: "both", difficulty: "intermedio", equipment: "banda con manijas", isActiveRecovery: false, description: "Ancla la banda en un punto alto (arriba de la puerta). El leñador diagonal de alto a bajo con banda entrena la musculatura antirotacional del core en patrones diagonales funcionales —los mismos utilizados en deportes de raqueta, lanzamiento y cambios de dirección. La pausa isométrica en el punto de máxima rotación obliga a los oblicuos y el multífido a generar fuerza isométrica contra la resistencia de la banda. McGill (2010) establece que el entrenamiento antirotacional isométrico es superior al rotacional dinámico para la estabilidad raquídea sin riesgo de cizallamiento discal.", phaseInstructions: { concentric: "Jala la banda en diagonal de arriba hacia abajo y al lado contrario. Exhala. Gira el torso.", isometric: "Punto de máxima rotación diagonal. Core contraído. Pausa completa. Resistencia máxima.", eccentric: "Regresa a la posición inicial con control total. 4 segundos. Resiste el tirón de la banda." }, phases: { eccentric: 4, isometric: 2, concentric: 2, rest: 45 }, genderPhases: { female: { eccentric: 4, isometric: 3, concentric: 2, rest: 30 }, male: { eccentric: 4, isometric: 2, concentric: 2, rest: 45 }, }, seriesDefault: 3, repsDefault: 10, unilateral: true, caloriesPerMinute: 6, rehab: { injury: "Lumbar", protocol: "Banda mínima. Rango de rotación reducido. Sin dolor.", phases: { eccentric: 4, isometric: 2, concentric: 2, rest: 90 }, series: 3, reps: 8, notes: "Solo en fase 3 de rehabilitación lumbar. Evitar en fase aguda.", }, }, { id: "tube_band_pallof_press_band", name: "Pallof Press con Banda Tubular", type: "Core", targetMuscles: ["core", "oblicuos", "transverso abdominal"], gender: "both", difficulty: "principiante", equipment: "banda con manijas", isActiveRecovery: false, description: "Ancla la banda lateralmente a la altura del pecho. El Pallof press con banda tubular es el ejercicio antirotacional isométrico por excelencia. La tensión lateral constante de la banda genera un momento de rotación que el core debe resistir de forma isométrica durante todo el movimiento. Esto activa el transverso abdominal, los oblicuos y el cuadrado lumbar en su función principal: estabilización y antirotación, no flexión. Contreras y Schoenfeld (2011) lo describen como superior a los crunches para la función real del core, ya que replica las demandas del movimiento funcional y deportivo. La pausa isométrica en extensión completa de brazos maximiza el brazo de palanca de la resistencia.", phaseInstructions: { concentric: "Extiende los brazos hacia adelante en línea recta. Exhala. No dejes que la banda te rote.", isometric: "Brazos completamente extendidos. Core en máxima contracción antirotacional. Pausa completa.", eccentric: "Regresa las manos al pecho con control. 4 segundos. Mantén el cuerpo perpendicular a la banda." }, phases: { eccentric: 4, isometric: 3, concentric: 2, rest: 45 }, genderPhases: { female: { eccentric: 4, isometric: 3, concentric: 2, rest: 30 }, male: { eccentric: 4, isometric: 3, concentric: 2, rest: 45 }, }, seriesDefault: 3, repsDefault: 10, unilateral: true, caloriesPerMinute: 5, rehab: { injury: "Lumbar", protocol: "Banda mínima. Posición segura para la columna. Sin rotación del torso.", phases: { eccentric: 4, isometric: 3, concentric: 2, rest: 90 }, series: 3, reps: 10, notes: "Primer ejercicio de carga en rehabilitación lumbar: estabilización antirotacional sin cizallamiento discal.", }, }, { id: "tube_band_good_morning", name: "Buenos Días con Banda Tubular", type: "Compuesto", targetMuscles: ["isquiotibiales", "glúteos", "espalda baja"], gender: "both", difficulty: "intermedio", equipment: "banda con manijas", isActiveRecovery: false, description: "Pisa la banda con ambos pies y pasa las manijas sobre los hombros detrás del cuello. La posición de la banda replica exactamente la carga del buenos días con barra pero con resistencia variable: máxima tensión en extensión completa (posición erecta) donde los extensores lumbares trabajan isométricamente para mantener la columna neutra. La excéntrica lenta de 4 segundos genera la mayor tensión en el punto de máximo estiramiento de los isquiotibiales, acumulando el estrés mecánico que estimula la síntesis de colágeno del tendón. Protocolo de Alfredson adaptado: carga excéntrica progresiva para tendinopatía de isquiotibiales proximal.", phaseInstructions: { eccentric: "Inclina el torso hacia adelante con caderas hacia atrás. Espalda plana. 4 segundos. Isquiotibiales en tensión.", isometric: "Torso paralelo al suelo o según flexibilidad. Máxima tensión en isquiotibiales. Pausa sin dolor.", concentric: "Activa glúteos y extiende caderas. Sube erguido. La banda tira hacia abajo: resiste. Exhala." }, phases: { eccentric: 4, isometric: 2, concentric: 2, rest: 60 }, genderPhases: { female: { eccentric: 4, isometric: 3, concentric: 2, rest: 45 }, male: { eccentric: 4, isometric: 2, concentric: 2, rest: 60 }, }, seriesDefault: 3, repsDefault: 10, caloriesPerMinute: 6, rehab: { injury: "Isquiotibiales", protocol: "Rango según flexibilidad. Sin dolor en inserción proximal.", phases: { eccentric: 5, isometric: 2, concentric: 2, rest: 120 }, series: 3, reps: 8, notes: "Carga excéntrica para tendinopatía isquiotibial proximal: progresión del protocolo Oslo.", }, }, { id: "tube_band_lunge", name: "Zancada con Banda Tubular", type: "Compuesto", targetMuscles: ["cuádriceps", "glúteos", "equilibrio"], gender: "both", difficulty: "intermedio", equipment: "banda con manijas", isActiveRecovery: false, unilateral: true, description: "Pisa la banda con el pie delantero y sostén las manijas a la altura de los hombros. La banda añade resistencia al cuádriceps en la extensión de rodilla y genera un componente de estabilidad lateral en la rodilla delantera, activando el glúteo medio y los estabilizadores de tobillo. La zancada con banda es superior a la zancada con mancuernas para la estabilidad de rodilla en el plano frontal: el vector de resistencia diagonal activa el TFL y el glúteo medio simultáneamente (Youdas et al., 2010). La excéntrica lenta de 4 segundos maximiza la activación del cuádriceps en la fase de descenso, que corresponde al protocolo de carga excéntrica para tendinopatía rotuliana.", phaseInstructions: { eccentric: "Desciende lento. Rodilla delantera no pasa los dedos. Torso erecto. 4 segundos.", isometric: "Rodilla delantera a 90°. Máxima tensión bilateral. Pausa completa. La banda resiste.", concentric: "Empuja el suelo con talón delantero. Sube con control. Exhala. Extiende completamente." }, phases: { eccentric: 4, isometric: 2, concentric: 2, rest: 60 }, genderPhases: { female: { eccentric: 4, isometric: 3, concentric: 2, rest: 45 }, male: { eccentric: 4, isometric: 2, concentric: 2, rest: 60 }, }, seriesDefault: 3, repsDefault: 10, caloriesPerMinute: 7, rehab: { injury: "Rodilla", protocol: "Banda mínima. Rango parcial. Apoyo en pared si necesario.", phases: { eccentric: 4, isometric: 2, concentric: 2, rest: 90 }, series: 3, reps: 8, notes: "Carga excéntrica unilateral: excelente para rehabilitación de rodilla y propiocepción.", }, },
+
+  {
+    id: "jump_squat",
+    name: "Sentadilla Pliométrica",
+    type: "Explosivo",
+    targetMuscles: ["cuádriceps", "glúteos", "gemelos"],
+    gender: "both",
+    difficulty: "intermedio",
+    equipment: "suelo",
+    isActiveRecovery: false,
+    description: "Alternativa sin cajón al box jump. Desarrolla potencia explosiva de tren inferior con el mismo estímulo neuromuscular. Lum et al. (2021): pliometría combinada con isométrico previo mejora el CMJ (salto de contramovimiento) un 4-8% respecto a la pliometría sola. El aterrizaje con rodillas a 90° es el isométrico excéntrico que entrena amortiguación y protege la rodilla. Bogdanis et al. (2018): fase excéntrica controlada en aterrizaje aumenta 43% la tasa de desarrollo de fuerza en extensores de rodilla.",
+    phaseInstructions: {
+      eccentric: "Desciende rápido con rodillas a 90°. Pies al ancho de hombros. Brazos atrás para impulso. Talones en suelo.",
+      isometric: "Pausa brevísima en el fondo. Core activado. Acumula energía elástica. Rodillas alineadas con pies.",
+      concentric: "¡Explota hacia arriba con toda la fuerza! Extiende caderas, rodillas y tobillos. Brazos arriba. Aterriza suave con rodillas semiflexionadas."
+    },
+    phases: { eccentric: 1, isometric: 1, concentric: 1, rest: 120 },
+    genderPhases: {
+      female: { eccentric: 1, isometric: 1, concentric: 1, rest: 105 },
+      male:   { eccentric: 1, isometric: 1, concentric: 1, rest: 120 },
+    },
+    seriesDefault: 3,
+    repsDefault: 6,
+    caloriesPerMinute: 11,
+    rehab: {
+      injury: "Tobillo/Rodilla",
+      protocol: "Sin salto: sentadilla explosiva sin despegar del suelo. Isométrico prolongado.",
+      phases: { eccentric: 2, isometric: 2, concentric: 1, rest: 120 },
+      series: 3,
+      reps: 6,
+      notes: "Progresión: aterrizaje suave → salto bajo → salto completo. Sin dolor en ninguna fase.",
+    },
+  },
 
 ];
 
