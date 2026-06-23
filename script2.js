@@ -683,9 +683,14 @@ document.addEventListener("DOMContentLoaded", function () {
             html += '<div class="desc-row"><span class="desc-label">💪 Músculos</span><span>' + lib.targetMuscles.join(", ") + '</span></div>';
         }
         if (lib.equipment) {
-            var altLib = lib.alternative ? getExById(lib.alternative) : null;
+            var altNames = [];
+            if (lib.alternatives && lib.alternatives.length) {
+                lib.alternatives.forEach(function(aid) { var a = getExById(aid); if (a) altNames.push(a.name); });
+            } else if (lib.alternative) {
+                var a0 = getExById(lib.alternative); if (a0) altNames.push(a0.name);
+            }
             html += '<div class="desc-row"><span class="desc-label">🔧 Equipo</span><span>' + lib.equipment
-                + (altLib ? ' <span class="alt-badge">Alt: ' + altLib.name + '</span>' : '') + '</span></div>';
+                + (altNames.length ? ' <span class="alt-badge">Alt: ' + altNames.join(' / ') + '</span>' : '') + '</span></div>';
         }
         if (lib.description) { html += '<p class="desc-text">' + lib.description + '</p>'; }
         html += '<div class="desc-phase-images">'
@@ -879,6 +884,60 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+    // Devuelve el primer alt disponible que NO esté ya en la rutina.
+    // Soporta lib.alternatives (array) y lib.alternative (string legacy).
+    function getAltForExercise(lib, routineExercises) {
+        var currentIds = routineExercises.map(function(e) {
+            return typeof e === "string" ? e : e.id;
+        });
+        var candidates = [];
+        if (lib.alternatives && lib.alternatives.length) {
+            candidates = lib.alternatives;
+        } else if (lib.alternative) {
+            candidates = [lib.alternative];
+        }
+        for (var ci = 0; ci < candidates.length; ci++) {
+            var cid = candidates[ci];
+            if (currentIds.indexOf(cid) === -1) {
+                var found = getExById(cid);
+                if (found) return found;
+            }
+        }
+        // Si todos los alts ya están en la rutina, devuelve el primero de todos modos
+        if (candidates.length) return getExById(candidates[0]);
+        return null;
+    }
+
+    // Dado el alt actualmente asignado (altId), busca el SIGUIENTE alt del array
+    // que no esté ya en la rutina (para rotar al presionar 🔄 varias veces).
+    function getNextAlt(lib, currentAltId, routineExercises) {
+        var currentIds = routineExercises.map(function(e) {
+            return typeof e === "string" ? e : e.id;
+        });
+        var candidates = [];
+        if (lib.alternatives && lib.alternatives.length) {
+            candidates = lib.alternatives;
+        } else if (lib.alternative) {
+            candidates = [lib.alternative];
+        }
+        var curIdx = candidates.indexOf(currentAltId);
+        // Buscar siguiente que no esté en la rutina
+        for (var offset = 1; offset <= candidates.length; offset++) {
+            var nextIdx = (curIdx + offset) % candidates.length;
+            var nid = candidates[nextIdx];
+            if (currentIds.indexOf(nid) === -1) {
+                var found = getExById(nid);
+                if (found) return found;
+            }
+        }
+        // Si no hay ninguno libre, rotar al siguiente sin importar
+        if (candidates.length > 1) {
+            var nextIdx2 = (curIdx + 1) % candidates.length;
+            return getExById(candidates[nextIdx2]);
+        }
+        return getExById(candidates[0]);
+    }
+
     function buildInlineDetailHTML(r) {
         var seriesVal = r.seriesPerEx || 3;
         var repsVal   = r.repsPerEx   || 10;
@@ -888,7 +947,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!lib) return "";
             var phases = (typeof ex === "object" && ex.customPhases) ? ex.customPhases : lib.phases;
             var unilateralBadge = lib.unilateral ? '<span class="bilateral-badge">↕ unilateral</span>' : "";
-            var altLib = lib.alternative ? getExById(lib.alternative) : null;
+            var altLib = getAltForExercise(lib, r.exercises);
             var altBadge = altLib ? '<button class="alt-swap-btn" data-exindex="' + i + '" data-origid="' + lib.id + '" data-altid="' + altLib.id + '" data-altname="' + altLib.name + '" data-origname="' + lib.name + '" data-swapped="0" title="Cambiar por: ' + altLib.name + '">🔄 Alt.</button>' : "";
             return '<div class="exercise-item" data-index="' + i + '">'
                 + '<div style="flex:1;min-width:0"><div class="exercise-name">'
@@ -930,7 +989,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (lib) showExerciseDesc(lib);
                     return;
                 }
-                // Botón ALT → toggle entre original y alternativa
+                // Botón ALT → cicla entre alternativas, omitiendo las que ya están en la rutina
                 var altBtn = e.target.closest(".alt-swap-btn");
                 if (altBtn) {
                     e.stopPropagation();
@@ -939,21 +998,42 @@ document.addEventListener("DOMContentLoaded", function () {
                     var origId   = altBtn.dataset.origid;
                     var altId    = altBtn.dataset.altid;
                     var origName = altBtn.dataset.origname;
-                    var altName  = altBtn.dataset.altname;
-                    var useId    = swapped ? origId : altId;
-                    var useLib   = getExById(useId);
+                    var origLib  = getExById(origId);
+                    var useLib;
+                    if (swapped) {
+                        // Volver al original
+                        useLib = getExById(origId);
+                    } else {
+                        // Avanzar al siguiente alt disponible (no en rutina)
+                        if (origLib) {
+                            useLib = getNextAlt(origLib, altId, r.exercises);
+                        } else {
+                            useLib = getExById(altId);
+                        }
+                    }
                     if (!useLib) return;
+                    var useId    = useLib.id;
                     var curEx    = r.exercises[exIndex];
                     var customPh = (typeof curEx === "object" && curEx.customPhases) ? curEx.customPhases : null;
                     r.exercises[exIndex] = customPh ? { id: useId, customPhases: useLib.phases } : useId;
-                    // Actualizar UI sin rebuilding todo el detail
+                    // Actualizar UI
                     var nameSpan = altBtn.closest(".exercise-item").querySelector(".ex-name-link");
                     if (nameSpan) { nameSpan.dataset.exid = useId; nameSpan.textContent = useLib.name; }
                     var timesEl = altBtn.closest(".exercise-item").querySelector(".exercise-times");
                     if (timesEl) timesEl.textContent = "⬇️" + useLib.phases.eccentric + "s · ⏸️" + useLib.phases.isometric + "s · ⬆️" + useLib.phases.concentric + "s · 💤" + useLib.phases.rest + "s";
-                    altBtn.dataset.swapped = swapped ? "0" : "1";
-                    altBtn.title = swapped ? ("Cambiar por: " + altName) : ("Volver a: " + origName);
-                    altBtn.style.background = swapped ? "" : "rgba(252,221,9,0.25)";
+                    if (swapped) {
+                        // Volvió al original → resetear
+                        altBtn.dataset.swapped = "0";
+                        altBtn.dataset.altid   = origLib ? getAltForExercise(origLib, r.exercises).id : altId;
+                        altBtn.title = "Cambiar por: " + (origLib ? (getAltForExercise(origLib, r.exercises) || {name: altBtn.dataset.altname}).name : altBtn.dataset.altname);
+                        altBtn.style.background = "";
+                    } else {
+                        // Quedó en alternativa → marcar swapped, guardar altid actual para poder ciclar
+                        altBtn.dataset.swapped = "1";
+                        altBtn.dataset.altid   = useId;
+                        altBtn.title = "Volver a: " + origName;
+                        altBtn.style.background = "rgba(252,221,9,0.25)";
+                    }
                     return;
                 }
                 // Ícono lápiz → editar tiempos
@@ -1062,7 +1142,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var phases  = (typeof ex === "object" && ex.customPhases) ? ex.customPhases : (rehabOn && lib.rehab ? lib.rehab.phases : lib.phases);
             var isRehab = rehabOn && !!lib.rehab;
             var unilateralBadge = lib.unilateral ? '<span class="bilateral-badge">↕ unilateral</span>' : "";
-            var altLib  = lib.alternative ? getExById(lib.alternative) : null;
+            var altLib  = getAltForExercise(lib, r.exercises);
             var altBadge = altLib ? '<button class="alt-swap-btn" data-exindex="' + i + '" data-origid="' + lib.id + '" data-altid="' + altLib.id + '" data-altname="' + altLib.name + '" data-origname="' + lib.name + '" data-swapped="0" title="Cambiar por: ' + altLib.name + '">🔄 Alt.</button>' : "";
             return '<div class="exercise-item ' + (isRehab ? "rehab-mode" : "") + '" data-index="' + i + '">'
                 + '<div style="flex:1;min-width:0"><div class="exercise-name">'
@@ -2084,6 +2164,5 @@ document.addEventListener("DOMContentLoaded", function () {
             renderRoutinesList();
         }
     };
-                          
 
 });
