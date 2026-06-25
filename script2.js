@@ -168,10 +168,49 @@ document.addEventListener("DOMContentLoaded", function () {
     function releaseWakeLock() {
         if (wakeLock) { wakeLock.release().catch(function () {}); wakeLock = null; }
     }
+    // ── Visibilidad: auto-pausar al salir de la página (WhatsApp, cambio de app, etc.)
+    // Flag interno para saber si la pausa fue automática (por salir de la app)
+    var _autoPaused = false;
+
     document.addEventListener("visibilitychange", function () {
-        if (document.visibilityState === "visible" && trainingActive && !trainingPaused) {
+        if (!trainingActive) return;
+        if (document.visibilityState === "hidden") {
+            // La app pasa a segundo plano → pausar automáticamente si no estaba pausado
+            if (!trainingPaused) {
+                // Guardar el tiempo restante preciso antes de pausar
+                if (isResting || isBetweenExerciseRest) {
+                    restTimeLeft = totalDuration - ((Date.now() - phaseStartTime) / 1000);
+                    if (restTimeLeft < 0) restTimeLeft = 0;
+                    phaseTimeLeft = restTimeLeft;
+                } else {
+                    phaseTimeLeft = totalDuration - ((Date.now() - phaseStartTime) / 1000);
+                    if (phaseTimeLeft < 0) phaseTimeLeft = 0;
+                }
+                pauseTraining(true); // forzar pausa, no toggle
+                _autoPaused = true;
+            }
+        } else if (document.visibilityState === "visible") {
+            // La app vuelve al primer plano
             requestWakeLock();
-            phaseStartTime = Date.now() - ((totalDuration - phaseTimeLeft) * 1000);
+            if (trainingPaused && _autoPaused) {
+                _autoPaused = false;
+                // Resaltar el botón de reanudar para que el usuario lo note
+                var pb = document.getElementById("pauseTrainingBtn");
+                if (pb) {
+                    pb.style.boxShadow = "0 0 0 4px rgba(250,204,21,0.7)";
+                    setTimeout(function () { pb.style.boxShadow = ""; }, 3000);
+                }
+                var instrSmall = document.getElementById("instructionSmall");
+                if (instrSmall) {
+                    var prev = instrSmall.innerText;
+                    instrSmall.innerText = "⏸️ Pausado automáticamente · Toca Reanudar";
+                    instrSmall.style.color = "#facc15";
+                    setTimeout(function () {
+                        instrSmall.innerText = prev;
+                        instrSmall.style.color = "";
+                    }, 4000);
+                }
+            }
         }
     });
 
@@ -884,58 +923,125 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    // Devuelve el primer alt disponible que NO esté ya en la rutina.
-    // Soporta lib.alternatives (array) y lib.alternative (string legacy).
-    function getAltForExercise(lib, routineExercises) {
-        var currentIds = routineExercises.map(function(e) {
+    // ─────────────────────────────────────────────────────────────────────────
+    // LÓGICA DE ALTERNATIVAS
+    // Reglas:
+    //   1. Un alt no puede ser un ejercicio que YA está en la rutina.
+    //   2. Un alt no puede ser el mismo que otro ejercicio YA tiene asignado como alt
+    //      (para que cada ejercicio tenga una alternativa distinta dentro de la rutina).
+    //   3. Si el ejercicio tiene múltiples alts (array), se cyclea entre ellos
+    //      respetando las reglas anteriores.
+    //   4. Si no hay ningún alt libre, devuelve null (sin badge 🔄).
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // Obtiene los candidatos (array de IDs) del ejercicio dado.
+    function _getAltCandidates(lib) {
+        if (lib.alternatives && lib.alternatives.length) return lib.alternatives.slice();
+        if (lib.alternative) return [lib.alternative];
+        return [];
+    }
+
+    // Construye el set de IDs "ocupados" para una rutina dada:
+    //   - IDs de los ejercicios base de la rutina
+    //   - IDs de los alts que ya están ASIGNADOS a otros ejercicios (para no repetirlos)
+    // exIndex: el índice del ejercicio para el que estamos buscando alt (se excluye de los alts asignados)
+    function _buildOccupiedIds(routineExercises, exIndex) {
+        // IDs de los ejercicios de la rutina
+        var baseIds = routineExercises.map(function(e) {
             return typeof e === "string" ? e : e.id;
         });
-        var candidates = [];
-        if (lib.alternatives && lib.alternatives.length) {
-            candidates = lib.alternatives;
-        } else if (lib.alternative) {
-            candidates = [lib.alternative];
-        }
+        // IDs de los alts ya asignados a OTROS ejercicios (no al propio)
+        var assignedAltIds = [];
+        routineExercises.forEach(function(e, i) {
+            if (i === exIndex) return; // saltar el propio
+            var eid = typeof e === "string" ? e : e.id;
+            var elib = getExById(eid);
+            if (!elib) return;
+            // El "alt asignado" de otro ejercicio es el primer candidato disponible que no esté en base
+            var cands = _getAltCandidates(elib);
+            for (var ci = 0; ci < cands.length; ci++) {
+                if (baseIds.indexOf(cands[ci]) === -1) {
+                    assignedAltIds.push(cands[ci]);
+                    break; // solo el primero asignado cuenta
+                }
+            }
+        });
+        return baseIds.concat(assignedAltIds);
+    }
+
+    // Devuelve el PRIMER alt disponible para lib en la posición exIndex de la rutina.
+    // "Disponible" = no ocupado (no está en la rutina ni asignado a otro ejercicio).
+    // Si todos los alts están ocupados, devuelve el primero libre de la rutina (aunque ya sea alt de otro).
+    // Si no hay ningún candidato, devuelve null.
+    function getAltForExercise(lib, routineExercises, exIndex) {
+        var candidates = _getAltCandidates(lib);
+        if (!candidates.length) return null;
+
+        var idx = (exIndex !== undefined) ? exIndex : -1;
+        var occupiedIds = _buildOccupiedIds(routineExercises, idx);
+
+        // Prioridad 1: alt que no esté ni en la rutina ni asignado a otro ejercicio
         for (var ci = 0; ci < candidates.length; ci++) {
             var cid = candidates[ci];
-            if (currentIds.indexOf(cid) === -1) {
+            if (occupiedIds.indexOf(cid) === -1) {
                 var found = getExById(cid);
                 if (found) return found;
             }
         }
-        // Si todos los alts ya están en la rutina, devuelve el primero de todos modos
-        if (candidates.length) return getExById(candidates[0]);
-        return null;
+
+        // Prioridad 2: alt que no esté en los ejercicios BASE de la rutina (aunque sea alt de otro)
+        var baseIds = routineExercises.map(function(e) { return typeof e === "string" ? e : e.id; });
+        for (var ci2 = 0; ci2 < candidates.length; ci2++) {
+            var cid2 = candidates[ci2];
+            if (baseIds.indexOf(cid2) === -1) {
+                var found2 = getExById(cid2);
+                if (found2) return found2;
+            }
+        }
+
+        // Prioridad 3: ninguno libre → devolver el primero que exista (fallback)
+        return getExById(candidates[0]) || null;
     }
 
-    // Dado el alt actualmente asignado (altId), busca el SIGUIENTE alt del array
-    // que no esté ya en la rutina (para rotar al presionar 🔄 varias veces).
-    function getNextAlt(lib, currentAltId, routineExercises) {
-        var currentIds = routineExercises.map(function(e) {
-            return typeof e === "string" ? e : e.id;
-        });
-        var candidates = [];
-        if (lib.alternatives && lib.alternatives.length) {
-            candidates = lib.alternatives;
-        } else if (lib.alternative) {
-            candidates = [lib.alternative];
-        }
+    // Dado el alt actualmente asignado (altId), busca el SIGUIENTE alt disponible
+    // para rotar al presionar 🔄 varias veces. Respeta las mismas reglas de no-repetición.
+    function getNextAlt(lib, currentAltId, routineExercises, exIndex) {
+        var candidates = _getAltCandidates(lib);
+        if (!candidates.length) return null;
+
+        var idx = (exIndex !== undefined) ? exIndex : -1;
+        var baseIds = routineExercises.map(function(e) { return typeof e === "string" ? e : e.id; });
+        var occupiedIds = _buildOccupiedIds(routineExercises, idx);
+
         var curIdx = candidates.indexOf(currentAltId);
-        // Buscar siguiente que no esté en la rutina
+        if (curIdx === -1) curIdx = 0;
+
+        // Buscar siguiente que no esté completamente ocupado
         for (var offset = 1; offset <= candidates.length; offset++) {
             var nextIdx = (curIdx + offset) % candidates.length;
             var nid = candidates[nextIdx];
-            if (currentIds.indexOf(nid) === -1) {
+            if (occupiedIds.indexOf(nid) === -1) {
                 var found = getExById(nid);
                 if (found) return found;
             }
         }
-        // Si no hay ninguno libre, rotar al siguiente sin importar
-        if (candidates.length > 1) {
-            var nextIdx2 = (curIdx + 1) % candidates.length;
-            return getExById(candidates[nextIdx2]);
+
+        // Segundo intento: siguiente que no esté en la rutina base
+        for (var offset2 = 1; offset2 <= candidates.length; offset2++) {
+            var nextIdx2 = (curIdx + offset2) % candidates.length;
+            var nid2 = candidates[nextIdx2];
+            if (baseIds.indexOf(nid2) === -1) {
+                var found2 = getExById(nid2);
+                if (found2) return found2;
+            }
         }
-        return getExById(candidates[0]);
+
+        // Fallback: siguiente en el array sin importar nada
+        if (candidates.length > 1) {
+            var nextIdx3 = (curIdx + 1) % candidates.length;
+            return getExById(candidates[nextIdx3]) || null;
+        }
+        return getExById(candidates[0]) || null;
     }
 
     function buildInlineDetailHTML(r) {
@@ -947,7 +1053,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!lib) return "";
             var phases = (typeof ex === "object" && ex.customPhases) ? ex.customPhases : lib.phases;
             var unilateralBadge = lib.unilateral ? '<span class="bilateral-badge">↕ unilateral</span>' : "";
-            var altLib = getAltForExercise(lib, r.exercises);
+            var altLib = getAltForExercise(lib, r.exercises, i);
             var altBadge = altLib ? '<button class="alt-swap-btn" data-exindex="' + i + '" data-origid="' + lib.id + '" data-altid="' + altLib.id + '" data-altname="' + altLib.name + '" data-origname="' + lib.name + '" data-swapped="0" title="Cambiar por: ' + altLib.name + '">🔄 Alt.</button>' : "";
             return '<div class="exercise-item" data-index="' + i + '">'
                 + '<div style="flex:1;min-width:0"><div class="exercise-name">'
@@ -1006,7 +1112,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     } else {
                         // Avanzar al siguiente alt disponible (no en rutina)
                         if (origLib) {
-                            useLib = getNextAlt(origLib, altId, r.exercises);
+                            useLib = getNextAlt(origLib, altId, r.exercises, exIndex);
                         } else {
                             useLib = getExById(altId);
                         }
@@ -1024,8 +1130,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (swapped) {
                         // Volvió al original → resetear
                         altBtn.dataset.swapped = "0";
-                        altBtn.dataset.altid   = origLib ? getAltForExercise(origLib, r.exercises).id : altId;
-                        altBtn.title = "Cambiar por: " + (origLib ? (getAltForExercise(origLib, r.exercises) || {name: altBtn.dataset.altname}).name : altBtn.dataset.altname);
+                        altBtn.dataset.altid   = origLib ? (getAltForExercise(origLib, r.exercises, exIndex) || {id: altId}).id : altId;
+                        altBtn.title = "Cambiar por: " + (origLib ? (getAltForExercise(origLib, r.exercises, exIndex) || {name: altBtn.dataset.altname}).name : altBtn.dataset.altname);
                         altBtn.style.background = "";
                     } else {
                         // Quedó en alternativa → marcar swapped, guardar altid actual para poder ciclar
@@ -1142,7 +1248,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var phases  = (typeof ex === "object" && ex.customPhases) ? ex.customPhases : (rehabOn && lib.rehab ? lib.rehab.phases : lib.phases);
             var isRehab = rehabOn && !!lib.rehab;
             var unilateralBadge = lib.unilateral ? '<span class="bilateral-badge">↕ unilateral</span>' : "";
-            var altLib  = getAltForExercise(lib, r.exercises);
+            var altLib  = getAltForExercise(lib, r.exercises, i);
             var altBadge = altLib ? '<button class="alt-swap-btn" data-exindex="' + i + '" data-origid="' + lib.id + '" data-altid="' + altLib.id + '" data-altname="' + altLib.name + '" data-origname="' + lib.name + '" data-swapped="0" title="Cambiar por: ' + altLib.name + '">🔄 Alt.</button>' : "";
             return '<div class="exercise-item ' + (isRehab ? "rehab-mode" : "") + '" data-index="' + i + '">'
                 + '<div style="flex:1;min-width:0"><div class="exercise-name">'
@@ -1467,18 +1573,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ── Controles ─────────────────────────────────────────────────────────
 
-    function pauseTraining() {
+    // pauseTraining(forceState): si forceState es true → forzar pausa, false → forzar resume, undefined → toggle
+    function pauseTraining(forceState) {
         if (!trainingActive) return;
-        trainingPaused = !trainingPaused;
+        // Determinar nuevo estado
+        var shouldPause;
+        if (forceState === true)  shouldPause = true;
+        else if (forceState === false) shouldPause = false;
+        else shouldPause = !trainingPaused; // toggle
+        if (shouldPause === trainingPaused) return; // ya está en ese estado
+        trainingPaused = shouldPause;
         var pb = document.getElementById("pauseTrainingBtn");
         if (trainingPaused) {
             if (pb) pb.innerText = "▶️ Reanudar";
             clearRestSpeech();
-            phaseTimeLeft = totalDuration - ((Date.now() - phaseStartTime) / 1000);
+            // Guardar tiempo restante preciso
+            if (isResting || isBetweenExerciseRest) {
+                restTimeLeft = Math.max(0, totalDuration - ((Date.now() - phaseStartTime) / 1000));
+                phaseTimeLeft = restTimeLeft;
+            } else {
+                phaseTimeLeft = Math.max(0, totalDuration - ((Date.now() - phaseStartTime) / 1000));
+            }
             stopWorkerInterval();
             releaseWakeLock();
         } else {
             if (pb) pb.innerText = "⏸️ Pausar";
+            // Restaurar referencia de tiempo para continuar desde donde se pausó
             phaseStartTime = Date.now() - ((totalDuration - phaseTimeLeft) * 1000);
             if (isResting || isBetweenExerciseRest) {
                 var ex2  = currentRoutine && currentRoutine.exercises[currentExerciseIndex];
